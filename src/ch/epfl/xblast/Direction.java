@@ -16,16 +16,14 @@ public enum Direction {
             return W;
         case W: 
             return E;
-        default:
+        default: // impossible
             return null;
         }
     }
     boolean isHorizontal(){
-       if( this == E || this == W){
-           return true;
-       }
-       else{
-           return false;
-       }
+        return (this == E || this == W);
+    }
+    boolean isParallelTo(Direction that){
+        return (this.isHorizontal()==that.isHorizontal());
     }
 }
