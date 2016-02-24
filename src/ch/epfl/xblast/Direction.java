@@ -7,18 +7,7 @@ public enum Direction {
     W;
     
     Direction opposite(){
-        switch(this){
-        case N:
-            return S;
-        case S:
-            return N;
-        case E:
-            return W;
-        case W: 
-            return E;
-        default:
-            return null;
-        }
+        return values()[(this.ordinal()+2)%4];
     }
     boolean isHorizontal(){
        if( this == E || this == W){
@@ -27,5 +16,11 @@ public enum Direction {
        else{
            return false;
        }
+    }
+    boolean isParallelTo(Direction that){
+       if(this.ordinal() == that.ordinal() || this.ordinal() == (that.ordinal()+2)%4){
+           return true;
+       }
+       return false;
     }
 }
