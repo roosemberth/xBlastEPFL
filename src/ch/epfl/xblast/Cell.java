@@ -16,6 +16,7 @@ public final class Cell {
     public static final List<Cell> SPIRAL_ORDER = 
             Collections.unmodifiableList(spiralOrder());
     
+
     private static ArrayList<Cell> rowMajorOrder(){
         ArrayList<Cell> rowMajorOrder = new ArrayList<Cell>();
         for(int y = 0; y < ROWS; y++){
@@ -26,9 +27,6 @@ public final class Cell {
         return rowMajorOrder;
     }
     
-    public Cell getCell(int x, int y){
-        return ROW_MAJOR_ORDER.get(x + y * COLUMNS);
-    }
     private static ArrayList<Cell> spiralOrder(){
 
         ArrayList<Cell> spiral = new ArrayList<Cell>();
@@ -58,10 +56,10 @@ public final class Cell {
             i2.remove(0);
             for(int c1 : i1){
                 if(horizontal){
-                    spiral.add(new Cell(c1, c2));
+                    spiral.add(new Cell(c1,c2));
                 }
                 else{
-                    spiral.add(new Cell(c2, c1));
+                    spiral.add(new Cell(c2,c1));
                 }
             }
             Collections.reverse(i1);
