@@ -16,7 +16,6 @@ public class TestsStepOne {
         assertTrue(Direction.W.isParallelTo(Direction.E));
         assertTrue(Direction.E.isParallelTo(Direction.W));
         
-
         assertTrue(Direction.S.isParallelTo(Direction.S));
         assertTrue(Direction.N.isParallelTo(Direction.N));
         assertTrue(Direction.E.isParallelTo(Direction.E));

@@ -3,6 +3,7 @@ package ch.epfl.xblast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public final class Cell {
     public static int COLUMNS = 15;
@@ -32,6 +33,7 @@ public final class Cell {
         ArrayList<Cell> spiral = new ArrayList<Cell>();
         ArrayList<Integer> ix = new ArrayList<Integer>();
         ArrayList<Integer> iy = new ArrayList<Integer>();
+
         for(int x = 0; x < COLUMNS; x++){
             ix.add(x);
         }
@@ -143,15 +145,12 @@ public final class Cell {
         if(that == null){
             return false;
         }
-        else if(that.getClass() != this.getClass()){
+        if (!(that instanceof Cell)) return false;
+
+        if(((Cell)that).x== this.x && ((Cell)that).y == this.y)
+            return true;
+        else 
             return false;
-        }
-        else{
-            if(((Cell)that).x== this.x && ((Cell)that).y == this.y)
-                return true;
-            else 
-                return false;
-        }
     }
     
     public String toString(){
