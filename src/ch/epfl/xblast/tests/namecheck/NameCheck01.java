@@ -1,4 +1,4 @@
-package ch.epfl.xblast.namecheck;
+package ch.epfl.xblast.tests.namecheck;
 
 import java.util.List;
 

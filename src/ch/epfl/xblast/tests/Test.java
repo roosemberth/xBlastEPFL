@@ -1,6 +1,7 @@
-package ch.epfl.xblast;
+package ch.epfl.xblast.tests;
 
-import java.nio.file.DirectoryIteratorException;
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Direction;
 
 public class Test {
 

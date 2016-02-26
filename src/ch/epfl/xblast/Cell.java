@@ -11,8 +11,10 @@ public final class Cell {
     
     private final int x, y;
     
-    public static final List<Cell> ROW_MAJOR_ORDER = Collections.unmodifiableList(rowMajorOrder());
-    public static final List<Cell> SPIRAL_ORDER = Collections.unmodifiableList(spiralOrder());
+    public static final List<Cell> ROW_MAJOR_ORDER = 
+            Collections.unmodifiableList(rowMajorOrder());
+    public static final List<Cell> SPIRAL_ORDER = 
+            Collections.unmodifiableList(spiralOrder());
     
     private static ArrayList<Cell> rowMajorOrder(){
         ArrayList<Cell> rowMajorOrder = new ArrayList<Cell>();
@@ -147,8 +149,7 @@ public final class Cell {
             return false;
         }
         else{
-            Cell cell = (Cell)that;
-            if(cell.x == this.x && cell.y == this.y)
+            if(((Cell)that).x== this.x && ((Cell)that).y == this.y)
                 return true;
             else 
                 return false;

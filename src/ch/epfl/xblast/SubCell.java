@@ -2,10 +2,10 @@ package ch.epfl.xblast;
 
 public final class SubCell {
     
-    public static int CELL_WIDTH = 16;
-    public static int CELL_HEIGHT = 16;
-    public static int BOARD_WIDTH = CELL_WIDTH*Cell.COLUMNS;
-    public static int BOARD_HEIGHT = CELL_HEIGHT*Cell.ROWS;
+    public static int COLUMNS = 16;
+    public static int ROWS = 16;
+    public static int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
+    public static int BOARD_HEIGHT = ROWS*Cell.ROWS;
     
     private final int x, y;
     
@@ -15,11 +15,11 @@ public final class SubCell {
     }
     
     public static SubCell centralSubCellOf(Cell cell){
-        return new SubCell(cell.x()*CELL_WIDTH+CELL_WIDTH/2, cell.y()*CELL_HEIGHT+CELL_HEIGHT/2);
+        return new SubCell(cell.x()*COLUMNS+COLUMNS/2, cell.y()*ROWS+ROWS/2);
     }  
     
     public int distanceToCentral(){
-        return Math.abs((x%CELL_WIDTH)-(CELL_WIDTH/2))+Math.abs((y%CELL_WIDTH)-(CELL_WIDTH/2));
+        return Math.abs((x%COLUMNS)-(COLUMNS/2)) + Math.abs((y%COLUMNS)-(COLUMNS/2));
     }
     
     public int x(){
@@ -29,7 +29,7 @@ public final class SubCell {
         return y;
     }
     public boolean isCentral(){
-        if((x%CELL_WIDTH) == (CELL_WIDTH/2) && (y%CELL_WIDTH) == (CELL_WIDTH/2)){
+        if((x%COLUMNS) == (COLUMNS/2) && (y%COLUMNS) == (COLUMNS/2)){
             return true;
         }
         return false;
@@ -50,7 +50,7 @@ public final class SubCell {
         }
     }
     public Cell containingCell(){
-        return Cell.ROW_MAJOR_ORDER.get(x/CELL_WIDTH + (y/CELL_HEIGHT)*Cell.COLUMNS);
+        return new Cell(x/COLUMNS,(y/ROWS));
     }
     public boolean equals(Object that){
         if(that == null){
@@ -60,9 +60,7 @@ public final class SubCell {
             return false;
         }
         else{
-            SubCell cell = (SubCell)that;
-
-            if(cell.x == this.x && cell.y == this.y)
+            if(((SubCell)that).x== this.x && ((SubCell)that).y == this.y)
                 return true;
             else 
                 return false;
