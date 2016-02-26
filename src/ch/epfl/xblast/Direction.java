@@ -6,7 +6,7 @@ public enum Direction {
     S,
     W;
     
-    Direction opposite(){
+    public Direction opposite(){
         switch(this){
         case N:
             return S;
@@ -20,10 +20,10 @@ public enum Direction {
             return null;
         }
     }
-    boolean isHorizontal(){
+    public boolean isHorizontal(){
         return (this == E || this == W);
     }
-    boolean isParallelTo(Direction that){
+    public boolean isParallelTo(Direction that){
         return (this.isHorizontal()==that.isHorizontal());
     }
 }
