@@ -31,7 +31,6 @@ public class TestsStepOne {
         assertTrue(Direction.W.opposite() == Direction.E);
         assertTrue(Direction.E.opposite() == Direction.W);
     }
-    
     @Test
     public void checkNumberCells(){
         assertEquals(Cell.ROW_MAJOR_ORDER.size(), Cell.COUNT, 0);
