@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-openjdk"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-oracle"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/Storage/DevelHub/xBlastEPFL/res/sq.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/eclipse/plugins/org.junit_4.12.0.v201504281640/junit.jar"/>
+	<classpathentry kind="lib" path="/home/pedro/workspace/xBlast/sq.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

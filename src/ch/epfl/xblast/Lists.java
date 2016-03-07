@@ -16,5 +16,23 @@ public final class Lists {
         result.addAll(mirrored);
         return result;
     }
-    
+    public static <T> List<List<T>> permutations(List<T> l){
+        List<List<T>> list = new ArrayList<>();
+                
+        if(l.size() < 2){
+            list.add(l);
+            return list;
+        }
+        else{
+            List<List<T>> possiblePermutations = permutations(l.subList(1, l.size()));
+            for(List<T> ls : possiblePermutations){
+                for(int i = 0; i < ls.size()+1; i++){
+                    List<T> newList = new ArrayList(ls);
+                    newList.add(i, l.get(0));
+                    list.add(newList);
+                }
+            }
+        }
+        return list;
+    }
 }

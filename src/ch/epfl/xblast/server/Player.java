@@ -46,13 +46,17 @@ public final class Player {
     public LifeState lifeState(){
         return lifeStates.head();
     }
-//    TO DO
+
     public Sq<LifeState> statesForNextLife(){
-//        Sq <LifeState> l = Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(),LifeState.State.DYING));
-//        if(l.head().lives() == 1)
-        return null;
+        Sq <LifeState> l = Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(),LifeState.State.DYING));
+        if(lifeState().lives() == 1){
+            return l.concat(Sq.constant(new LifeState(lives()-1,LifeState.State.DEAD)));
+        }
+        else{
+            return l.concat(Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, new LifeState(lives()-1,LifeState.State.INVULNERABLE)).concat(Sq.constant(new LifeState(lives()-1,LifeState.State.DEAD))));
+        }
     }
-//    
+  
     public int lives(){
         return lifeStates.head().lives();
     }
