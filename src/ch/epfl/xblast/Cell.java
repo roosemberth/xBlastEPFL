@@ -5,10 +5,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * @author pedro
+ *
+ */
 public final class Cell {
-    public static int COLUMNS = 15;
-    public static int ROWS = 13;
-    public static int COUNT = COLUMNS * ROWS;
+    public static final int COLUMNS = 15;
+    public static final int ROWS = 13;
+    public static final int COUNT = COLUMNS * ROWS;
     
     private final int x, y;
     
@@ -111,21 +115,43 @@ public final class Cell {
         }*/
         return spiral;
     }
+    
+    /**
+     * Constructs a new cell, storing position x and y (fits into board size)
+     * @param x
+     * @param y
+     */
     public Cell(int x, int y){
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
     }
+    
+    /**
+     * @return the component x of the position
+     */
     public int x(){
         return x;
     }
+
+    /**
+     * @return the component y of the position
+     */
     public int y(){
         return y;
     }
     
+
+    /**
+     * @return the index of the cell, in row order
+     */
     public int rowMajorIndex(){
         return x + COLUMNS*y;
     }
     
+
+    /**
+     * @return the neighbor Cell in the given Direction
+     */
     public Cell neighbor(Direction dir){
         switch(dir){
         case N:

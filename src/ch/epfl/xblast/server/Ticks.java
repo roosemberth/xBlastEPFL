@@ -11,6 +11,6 @@ public interface Ticks {
     public static int BONUS_DISAPPEARING_TICKS = EXPLOSION_TICKS;
 
     public static int TICKS_PER_SECOND = 20;
-    public static int TICKS_NANOSECOND_DURATION = Time.NS_PER_S/TICKS_PER_SECOND;  
+    public static int TICK_NANOSECOND_DURATION = Time.NS_PER_S/TICKS_PER_SECOND;  
     public static int TOTAL_TICKS = TICKS_PER_SECOND*Time.S_PER_MIN*2;
 }

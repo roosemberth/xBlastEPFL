@@ -2,10 +2,10 @@ package ch.epfl.xblast;
 
 public final class SubCell {
     
-    public static int COLUMNS = 16;
-    public static int ROWS = 16;
-    public static int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
-    public static int BOARD_HEIGHT = ROWS*Cell.ROWS;
+    public static final int COLUMNS = 16;
+    public static final int ROWS = 16;
+    public static final int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
+    public static final int BOARD_HEIGHT = ROWS*Cell.ROWS;
     
     private final int x, y;
     

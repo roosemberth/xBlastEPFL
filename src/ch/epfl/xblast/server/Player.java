@@ -10,10 +10,10 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
 public final class Player {
-    private PlayerID id;
-    private Sq<LifeState> lifeStates;
-    private Sq<DirectedPosition> directedPos;
-    private int maxBombs, bombRange;
+    private final PlayerID id;
+    private final Sq<LifeState> lifeStates;
+    private final Sq<DirectedPosition> directedPos;
+    private final int maxBombs, bombRange;
     
     public Player(PlayerID id, Sq<LifeState> lifeStates, Sq<DirectedPosition> directedPos, int maxBombs, int bombRange){
         this.id = Objects.requireNonNull(id);
@@ -24,7 +24,6 @@ public final class Player {
     }
     
     public Player(PlayerID id, int lives, Cell position, int maxBombs, int bombRange){
-
         this.id = Objects.requireNonNull(id);
         this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
         this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
@@ -98,8 +97,8 @@ public final class Player {
     }
     
     public static final class DirectedPosition{
-        private SubCell position;
-        private Direction direction;
+        private final SubCell position;
+        private final Direction direction;
         
         public static Sq<DirectedPosition> stopped(DirectedPosition p){
             return Sq.constant(p);
@@ -132,8 +131,8 @@ public final class Player {
     }
     
     public static final class LifeState{
-        private int numLives;
-        private State state;
+        private final int numLives;
+        private final State state;
         
 
         public LifeState(int lives, State state){

@@ -16,6 +16,7 @@ public final class Lists {
         result.addAll(mirrored);
         return result;
     }
+    //TO DO:CHECK EMPTY LIST
     public static <T> List<List<T>> permutations(List<T> l){
         List<List<T>> list = new ArrayList<>();
                 

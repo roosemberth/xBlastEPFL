@@ -18,6 +18,7 @@ public final class Board {
             throw new IllegalArgumentException("Board passed has unvalid number of elements");
         this.blocks = new ArrayList<>(blocks);
     }
+    
     public static Board ofRows(List<List<Block>> rows){
         List<Sq<Block>> board = new ArrayList();
         if(rows.size() != Cell.ROWS) 
@@ -31,6 +32,7 @@ public final class Board {
         }
         return new Board(board);
     }
+    
     public static  Board ofInnerBlocksWalled(List<List<Block>> innerBlocks){
         List<Sq<Block>> board = new ArrayList();
         board.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
@@ -67,12 +69,15 @@ public final class Board {
         }
         return ofInnerBlocksWalled(board);
     }    
+    
     public Sq<Block> blocksAt(Cell c){
         return blocks.get(c.rowMajorIndex());  
     }
+    
     public Block blockAt(Cell c){
         return blocks.get(c.rowMajorIndex()).head();
     }
+    
     private void checkBlockMatrix(List<List<Block>> matrix, int rows, int columns){
         if(matrix.size() != Cell.ROWS) 
             throw new IllegalArgumentException("Wrong number of rows");

@@ -11,10 +11,10 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 
 public final class Bomb {
-    private PlayerID ownerId;
-    private Cell position;
-    private Sq<Integer> fuseLengths;
-    private int range;
+    private final PlayerID ownerId;
+    private final Cell position;
+    private final Sq<Integer> fuseLengths;
+    private final int range;
     
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range){
         this.ownerId = Objects.requireNonNull(ownerId);
