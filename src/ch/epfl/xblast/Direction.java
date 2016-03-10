@@ -9,6 +9,7 @@ public enum Direction {
     public Direction opposite(){
         return values()[(this.ordinal()+2)%4];
     }
+    
     public boolean isHorizontal(){
        if( this == E || this == W){
            return true;
@@ -17,6 +18,7 @@ public enum Direction {
            return false;
        }
     }
+    
     public boolean isParallelTo(Direction that){
        if(this.ordinal() == that.ordinal() || this.ordinal() == (that.ordinal()+2)%4){
            return true;

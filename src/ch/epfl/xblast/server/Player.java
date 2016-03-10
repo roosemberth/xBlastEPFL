@@ -46,6 +46,9 @@ public final class Player {
         return lifeStates.head();
     }
 
+    /**
+     * @return a sequence of the next LifeState's
+     */
     public Sq<LifeState> statesForNextLife(){
         Sq <LifeState> l = Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(),LifeState.State.DYING));
         if(lifeState().lives() == 1){
@@ -56,10 +59,16 @@ public final class Player {
         }
     }
   
+    /**
+     * @return current lives remaining to the player
+     */
     public int lives(){
         return lifeStates.head().lives();
     }
     
+    /**
+     * @return whether or not the player is alive
+     */
     public boolean isAlive(){
         return lives() > 0 ? true : false;
     }

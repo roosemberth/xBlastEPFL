@@ -7,6 +7,12 @@ import java.util.List;
 public final class Lists {
     private Lists(){}
     
+    /**
+     * returns the list mirrored, the 
+     * last element in the original list not being repeated
+     * @param l
+     * @return
+     */
     public static <T> List<T> mirrored(List<T> l){
         if(l.isEmpty()) throw new IllegalArgumentException(
                 "The list you tryed to mirror is empty");
@@ -17,6 +23,12 @@ public final class Lists {
         return result;
     }
     //TO DO:CHECK EMPTY LIST
+    /**
+     * returns all possible permutations
+     * of a given list
+     * @param l
+     * @return
+     */
     public static <T> List<List<T>> permutations(List<T> l){
         List<List<T>> list = new ArrayList<>();
                 

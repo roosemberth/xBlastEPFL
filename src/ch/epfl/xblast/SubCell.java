@@ -49,9 +49,11 @@ public final class SubCell {
             return null;
         }
     }
+    
     public Cell containingCell(){
         return new Cell(x/COLUMNS,(y/ROWS));
     }
+    
     public boolean equals(Object that){
         if(that == null){
             return false;
@@ -66,6 +68,7 @@ public final class SubCell {
                 return false;
         }
     }
+    
     public String toString(){
         return "(" + x + "," + y + ")";
     }
