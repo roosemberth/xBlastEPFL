@@ -1,7 +1,8 @@
 package ch.epfl.xblast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
+
+import java.lang.reflect.*;
 
 import org.junit.Test;
 
@@ -15,21 +16,52 @@ import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.Player;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
+import ch.epfl.xblast.server.Ticks;
 
 public class TestsStepThree {
     
-    
-    
-    
-    
-  
-    
     @Test
     public void playerCheckStats(){
-        Player p = new Player(PlayerID.PLAYER_1,0,new Cell(0,0),0,0);
-        assertFalse(p.isAlive());
+    	// Create a player with 2 lives
+        Player p = new Player(PlayerID.PLAYER_1,2,new Cell(0,0),0,0);
         assertEquals(p.bombRange(), 0,0);
-        assertEquals(p.maxBombs(), 0,0);
+        assertEquals(p.maxBombs(), 0,0) ;
+        assertTrue(p.isAlive());
+
+        try {
+			Field lifeStates = Player.class.getDeclaredField("lifeStates");
+			lifeStates.setAccessible(true);
+
+			Sq <LifeState> l;
+
+			// Cycle life state. Lives -> 1
+			lifeStates.set(p, p.statesForNextLife());
+
+			assertTrue(p.isAlive());
+			for (int i=0; i<Ticks.PLAYER_DYING_TICKS; ++i){
+				assertEquals(Player.LifeState.State.DYING, p.lifeState().state());
+				lifeStates.set(p, p.lifeStates().tail());
+			}
+			for (int i=0; i<Ticks.PLAYER_INVULNERABLE_TICKS; ++i){
+				assertEquals(Player.LifeState.State.INVULNERABLE, p.lifeState().state());
+				lifeStates.set(p, p.lifeStates().tail());
+			}
+			assertEquals(Player.LifeState.State.VULNERABLE, p.lifeState().state());
+
+			// Cycle life state. Lives -> 0
+			lifeStates.set(p, p.statesForNextLife());
+			
+			for (int i=0; i<Ticks.PLAYER_DYING_TICKS; ++i){
+				assertEquals(Player.LifeState.State.DYING, p.lifeState().state());
+				lifeStates.set(p, p.lifeStates().tail());
+			}
+			assertEquals(Player.LifeState.State.DEAD, p.lifeState().state());
+			lifeStates.set(p, p.lifeStates().tail());
+			
+		} catch (ReflectiveOperationException e) {
+			System.out.println("Reflective check failed: " + e.getMessage());
+			throw new RuntimeException(e);
+		}
     }
     
     @Test
