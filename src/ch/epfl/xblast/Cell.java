@@ -182,4 +182,7 @@ public final class Cell {
     public String toString(){
         return "("+x+","+y+")";
     }
+    public int hashCode(){
+        return rowMajorIndex();
+    }
 }

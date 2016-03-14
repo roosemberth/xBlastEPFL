@@ -72,4 +72,7 @@ public final class SubCell {
     public String toString(){
         return "(" + x + "," + y + ")";
     }
+    public int hashCode(){
+        return x + BOARD_WIDTH*y;
+    }
 }

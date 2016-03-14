@@ -20,7 +20,7 @@ public final class Lists {
         Collections.reverse(mirrored);
         List<T> result = new ArrayList(l.subList(0, l.size()-1));
         result.addAll(mirrored);
-        return result;
+        return Collections.unmodifiableList(result);
     }
     //TO DO:CHECK EMPTY LIST
     /**
@@ -31,10 +31,12 @@ public final class Lists {
      */
     public static <T> List<List<T>> permutations(List<T> l){
         List<List<T>> list = new ArrayList<>();
-                
-        if(l.size() < 2){
+        if(l.size() == 0){
+            return Collections.unmodifiableList(list);
+        }
+        else if(l.size() < 2){
             list.add(l);
-            return list;
+            return Collections.unmodifiableList(list);
         }
         else{
             List<List<T>> possiblePermutations = permutations(l.subList(1, l.size()));
@@ -46,6 +48,6 @@ public final class Lists {
                 }
             }
         }
-        return list;
+        return Collections.unmodifiableList(list);
     }
 }
