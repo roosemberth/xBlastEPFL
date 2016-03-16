@@ -1,16 +1,21 @@
 package ch.epfl.xblast.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
+import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
 
 /**
@@ -33,7 +38,14 @@ public final class GameState {
     private final List<Sq<Sq<Cell>>> explosions; 
     private final List<Sq<Cell>> blasts;
     
-    //Copie de securite?
+    private static final List<List<PlayerID>> playerPermutations = Lists.permutations(Arrays.asList(PlayerID.values()));
+    //or maybe just use ticks%numPermutations
+    private static int indexPermutation = 0;
+    
+    private static final Random RANDOM = new Random(2016);
+    
+    private static final Block[] transformBlocks = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
+    
     /**
      * Constructs a new Player, using the given vaues
      * @param ticks
@@ -127,31 +139,156 @@ public final class GameState {
     }
     
     public Map<Cell, Bomb> bombedCells(){
-        return null;
+        Map<Cell,Bomb> bombedCells = new HashMap<>();
+        for(Bomb b : bombs){
+            bombedCells.put(b.position(), b);
+        }
+        return bombedCells;
     }
     
     public Set<Cell> blastedCells(){
-        return null;
+        Set<Cell> blastedCells = new HashSet<>();
+        List<Sq<Cell>> particles = nextBlasts(blasts, board, explosions);
+        for(Sq<Cell> c : particles){
+            blastedCells.add(c.head());
+        }
+        return blastedCells;
     }
     
+    /*
+     * 
+     * A VOIRRRRRRRRRRRRRRRRRRRRRR
+     * player bombed cells1
+     * 
+     * CHANGE TICKS HERE???
+     * 
+     */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
-        return null;
+        //Find bonus cells containing player
+        Set<Cell> consumedBonuses = new HashSet<>();
+        Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
+        for(PlayerID id : playerPermutations.get(indexPermutation)){
+            Player p = listToHash(players).get(id);
+            Cell playerPos = p.position().containingCell();
+            if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos)){
+                consumedBonuses.add(playerPos);
+                playerBonuses.put(id, board.blockAt(playerPos).associatedBonus());
+            }
+        }
+        
+        Board nextBoard = nextBoard(board,consumedBonuses,blastedCells());
+        
+
+        //Update so it uses next permutation for conflict
+        indexPermutation = (indexPermutation+1)%playerPermutations.size();
+        
+        List<Player> newPlayers = nextPlayers(players, playerBonuses, null, nextBoard, blastedCells(), speedChangeEvents);
+        List<Bomb> newBombs = newlyDroppedBombs(players, bombDropEvents, bombs);
+        List<Sq<Sq<Cell>>>  nextExplosions = nextExplosions(explosions);
+        
+        
+        
+        
+        
+        //SHOULD THIS BE HERE????
+        for(Bomb b : bombs){
+            nextExplosions.addAll(b.explosion());
+        }
+        
+        
+        
+        
+        List<Sq<Cell>> nextBlasts = nextBlasts(blasts, board, explosions);
+        
+        return new GameState(ticks+1,nextBoard,newPlayers, newBombs, nextExplosions, nextBlasts);
     }
     
     private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0, List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Cell>> l = new ArrayList<>();
         for(Sq<Cell> bl : blasts0){
             Sq<Cell> t = bl.tail();
-            if(!bl.isEmpty() && board0.blockAt(bl.head()).isFree())
+            if(!t.isEmpty() && board0.blockAt(bl.head()).isFree())
                 l.add(t);
         }
         for(Sq<Sq<Cell>> bl : explosions0){
             Sq<Cell> b = bl.head();
-            //Probaby unecessary as the bomb can't be placed in a non-free position
-            if(!b.isEmpty() && board0.blockAt(b.head()).isFree())
+            if(!b.isEmpty())
                 l.add(b);
         }
-        return Collections.unmodifiableList(l);
+        return l;
+    }
+    
+    private static Board nextBoard(Board board0, Set<Cell> consumedBonuses, Set<Cell> blastedCells1){
+        List<Sq<Block>> newBlocks = new ArrayList<>(); 
+        for(int y = 0; y < Cell.ROWS; y++){
+            for(int x = 0; x < Cell.COLUMNS; x++){
+                Cell curPos = new Cell(x,y);
+                if(!blastedCells1.contains(curPos))
+                    newBlocks.add(board0.blocksAt(curPos).tail());
+                else if(consumedBonuses.contains(curPos)){
+                    newBlocks.add(Sq.constant(Block.FREE));
+                }
+                else{
+                    if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
+                        newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
+                                Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
+                    }
+                    else if(board0.blockAt(curPos).isBonus())
+                        newBlocks.add(Sq.repeat(Ticks.BONUS_DISAPPEARING_TICKS, board0.blockAt(curPos)).concat(
+                            Sq.constant(Block.FREE)));
+                    else
+                        newBlocks.add(board0.blocksAt(curPos).tail());
+      
+                }
+            }
+        }
+        Board nextBoard = new Board(newBlocks);
+        return nextBoard;
+    }
+    
+    private static List<Player> nextPlayers(List<Player> players0, Map<PlayerID, Bonus> playerBonuses, 
+            Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1, Map<PlayerID, Optional<Direction>> speedChangeEvents){
+        return players0;
+    }
+    
+    private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
+        List<Sq<Sq<Cell>>> newList = new ArrayList<>();
+        for(Sq<Sq<Cell>> c : explosions0){
+            newList.add(c.tail());
+        }
+        return newList;
+    }
+    
+    //Check if needs to check player lalive or list already has players alive
+    private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
+        Map<PlayerID, Player> playerHash = listToHash(players0);
+        List<Bomb> newBombs = new ArrayList<>();
+        for(PlayerID id : playerPermutations.get(indexPermutation)){
+            if(bombDropEvents.contains(id)){
+                Player owner = playerHash.get(id);
+                int numBombs = 0;
+                
+                if(owner != null){
+                    //Find how many bombs player has active
+                    for(Bomb b : bombs0){
+                        if(b.ownerId()==owner.id())
+                            numBombs++;
+                    }
+                    if(owner.maxBombs() > numBombs)
+                        newBombs.add(owner.newBomb());
+                }
+            }
+        }
+        return newBombs;
+    }
+    
+    //Return HashMap containing <PlayerID, Player>
+    private static Map<PlayerID, Player> listToHash(List<Player> players){
+        Map<PlayerID,Player> hashMap = new HashMap<>();
+        for(Player p : players){
+            hashMap.put(p.id(),p);
+        }
+        return hashMap;
     }
     
     

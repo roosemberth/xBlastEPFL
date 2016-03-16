@@ -1,10 +1,14 @@
 package ch.epfl.xblast.server.debug;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
+import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
@@ -14,10 +18,13 @@ public final class GameStatePrinter {
     public static void printGameState(GameState s) {
         List<Player> ps = s.alivePlayers();
         Board board = s.board();
-
+        Map<Cell,Bomb> bombs = s.bombedCells();
+        Set<Cell> blastedCells = s.blastedCells();
+        
         for (int y = 0; y < Cell.ROWS; ++y) {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                 Cell c = new Cell(x, y);
+                //check if c has a bomb, if so draw different color
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
                         System.out.print(stringForPlayer(p));
@@ -28,6 +35,13 @@ public final class GameStatePrinter {
                 System.out.print(stringForBlock(b));
             }
             System.out.println();
+        }
+        Iterator it = bombs.entrySet().iterator();
+        for(Map.Entry<Cell, Bomb> b : bombs.entrySet()){
+            System.out.println("Bomb at: " + b.getKey());
+        }
+        for(Cell c : blastedCells){
+            System.out.println("Blasts at : " + c);
         }
     }
 
