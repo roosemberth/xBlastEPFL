@@ -38,7 +38,7 @@ public class Test {
         Set<PlayerID> newBombs = new HashSet<>();
         newBombs.add(PlayerID.PLAYER_1);
         System.out.println();
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < 500; i++){
             gs = gs.next(null,newBombs);
             GameStatePrinter.printGameState(gs);
         }

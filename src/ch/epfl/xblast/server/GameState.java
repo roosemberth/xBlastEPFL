@@ -155,14 +155,6 @@ public final class GameState {
         return blastedCells;
     }
     
-    /*
-     * 
-     * A VOIRRRRRRRRRRRRRRRRRRRRRR
-     * player bombed cells1
-     * 
-     * CHANGE TICKS HERE???
-     * 
-     */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
         Set<Cell> consumedBonuses = new HashSet<>();
@@ -186,13 +178,12 @@ public final class GameState {
         List<Bomb> newBombs = newlyDroppedBombs(players, bombDropEvents, bombs);
         List<Sq<Sq<Cell>>>  nextExplosions = nextExplosions(explosions);
         
-        
-        
-        
-        
-        //SHOULD THIS BE HERE????
         for(Bomb b : bombs){
-            nextExplosions.addAll(b.explosion());
+            if(b.fuseLengths().isEmpty())
+                nextExplosions.addAll(b.explosion());
+            else{
+                newBombs.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
+            }
         }
         
         
@@ -211,9 +202,11 @@ public final class GameState {
                 l.add(t);
         }
         for(Sq<Sq<Cell>> bl : explosions0){
-            Sq<Cell> b = bl.head();
-            if(!b.isEmpty())
-                l.add(b);
+            if(!bl.isEmpty()){
+                Sq<Cell> b = bl.head();
+                if(!b.isEmpty())
+                    l.add(b);
+            }
         }
         return l;
     }
@@ -223,19 +216,18 @@ public final class GameState {
         for(int y = 0; y < Cell.ROWS; y++){
             for(int x = 0; x < Cell.COLUMNS; x++){
                 Cell curPos = new Cell(x,y);
-                if(!blastedCells1.contains(curPos))
-                    newBlocks.add(board0.blocksAt(curPos).tail());
-                else if(consumedBonuses.contains(curPos)){
+                if (consumedBonuses.contains(curPos)){
                     newBlocks.add(Sq.constant(Block.FREE));
                 }
+                else if(!blastedCells1.contains(curPos))
+                    newBlocks.add(board0.blocksAt(curPos).tail());
                 else{
                     if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
                         newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
                                 Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
                     }
                     else if(board0.blockAt(curPos).isBonus())
-                        newBlocks.add(Sq.repeat(Ticks.BONUS_DISAPPEARING_TICKS, board0.blockAt(curPos)).concat(
-                            Sq.constant(Block.FREE)));
+                            newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
                     else
                         newBlocks.add(board0.blocksAt(curPos).tail());
       
@@ -254,12 +246,13 @@ public final class GameState {
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
         for(Sq<Sq<Cell>> c : explosions0){
-            newList.add(c.tail());
+            if(!c.isEmpty())
+                newList.add(c.tail());
         }
         return newList;
     }
     
-    //Check if needs to check player lalive or list already has players alive
+    //Check if needs to check player alive or list already has players alive
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
         Map<PlayerID, Player> playerHash = listToHash(players0);
         List<Bomb> newBombs = new ArrayList<>();
@@ -270,11 +263,14 @@ public final class GameState {
                 
                 if(owner != null){
                     //Find how many bombs player has active
+                    boolean occupied = false;
                     for(Bomb b : bombs0){
                         if(b.ownerId()==owner.id())
                             numBombs++;
+                        if(b.position().equals(owner.position()))
+                            occupied = true;
                     }
-                    if(owner.maxBombs() > numBombs)
+                    if(owner.maxBombs() > numBombs && !occupied)
                         newBombs.add(owner.newBomb());
                 }
             }
