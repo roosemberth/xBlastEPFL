@@ -157,14 +157,19 @@ public final class GameState {
     
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
+        List<Player> orderedPlayers = new ArrayList<>();
+        
+        for(PlayerID id : playerPermutations.get(indexPermutation)){
+            orderedPlayers.add(listToHash(players).get(id));
+        }
+        
         Set<Cell> consumedBonuses = new HashSet<>();
         Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
-        for(PlayerID id : playerPermutations.get(indexPermutation)){
-            Player p = listToHash(players).get(id);
+        for(Player p : orderedPlayers){
             Cell playerPos = p.position().containingCell();
             if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos)){
                 consumedBonuses.add(playerPos);
-                playerBonuses.put(id, board.blockAt(playerPos).associatedBonus());
+                playerBonuses.put(p.id(), board.blockAt(playerPos).associatedBonus());
             }
         }
         
@@ -256,22 +261,22 @@ public final class GameState {
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
         Map<PlayerID, Player> playerHash = listToHash(players0);
         List<Bomb> newBombs = new ArrayList<>();
-        for(PlayerID id : playerPermutations.get(indexPermutation)){
-            if(bombDropEvents.contains(id)){
-                Player owner = playerHash.get(id);
+        
+        for(Player p : players0){
+            if(bombDropEvents.contains(p.id())){
                 int numBombs = 0;
                 
-                if(owner != null){
+                if(p != null){
                     //Find how many bombs player has active
                     boolean occupied = false;
                     for(Bomb b : bombs0){
-                        if(b.ownerId()==owner.id())
+                        if(b.ownerId() == p.id())
                             numBombs++;
-                        if(b.position().equals(owner.position()))
+                        if(b.position().equals(p.position()))
                             occupied = true;
                     }
-                    if(owner.maxBombs() > numBombs && !occupied)
-                        newBombs.add(owner.newBomb());
+                    if(p.maxBombs() > numBombs && !occupied && p.isAlive())
+                        newBombs.add(p.newBomb());
                 }
             }
         }
