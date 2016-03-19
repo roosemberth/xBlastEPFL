@@ -148,8 +148,7 @@ public final class GameState {
     
     public Set<Cell> blastedCells(){
         Set<Cell> blastedCells = new HashSet<>();
-        List<Sq<Cell>> particles = nextBlasts(blasts, board, explosions);
-        for(Sq<Cell> c : particles){
+        for(Sq<Cell> c : blasts){
             blastedCells.add(c.head());
         }
         return blastedCells;
@@ -163,8 +162,17 @@ public final class GameState {
             orderedPlayers.add(listToHash(players).get(id));
         }
         
+
+        List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
+        Set <Cell> blastedCells1 = new HashSet<>();
+        
+        for(Sq<Cell> c : blasts1){
+            blastedCells1.add(c.head());
+        }
+        
         Set<Cell> consumedBonuses = new HashSet<>();
         Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
+        
         for(Player p : orderedPlayers){
             Cell playerPos = p.position().containingCell();
             if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos)){
@@ -173,30 +181,35 @@ public final class GameState {
             }
         }
         
-        Board nextBoard = nextBoard(board,consumedBonuses,blastedCells());
+        Board board1 = nextBoard(board,consumedBonuses,blastedCells1);
+        
         
 
-        //Update so it uses next permutation for conflict
-        indexPermutation = (indexPermutation+1)%playerPermutations.size();
+        List<Bomb> bombs1 = newlyDroppedBombs(players, bombDropEvents, bombs);     
         
-        List<Player> newPlayers = nextPlayers(players, playerBonuses, null, nextBoard, blastedCells(), speedChangeEvents);
-        List<Bomb> newBombs = newlyDroppedBombs(players, bombDropEvents, bombs);
-        List<Sq<Sq<Cell>>>  nextExplosions = nextExplosions(explosions);
+        List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);       
+
         
         for(Bomb b : bombs){
-            if(b.fuseLengths().isEmpty())
-                nextExplosions.addAll(b.explosion());
+            if(b.fuseLengths().isEmpty() || blastedCells().contains(b.position()))
+                explosions1.addAll(b.explosion());
             else{
-                newBombs.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
+                bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
         
         
         
         
-        List<Sq<Cell>> nextBlasts = nextBlasts(blasts, board, explosions);
         
-        return new GameState(ticks+1,nextBoard,newPlayers, newBombs, nextExplosions, nextBlasts);
+        List<Player> newPlayers = nextPlayers(players, playerBonuses, null, board1, blastedCells1, speedChangeEvents);
+       
+
+
+        //Update so it uses next permutation for conflict
+        indexPermutation = (indexPermutation+1)%playerPermutations.size();
+        
+        return new GameState(ticks+1,board1,newPlayers, bombs1, explosions1, blasts1);
     }
     
     private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0, List<Sq<Sq<Cell>>> explosions0){
@@ -232,7 +245,7 @@ public final class GameState {
                                 Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
                     }
                     else if(board0.blockAt(curPos).isBonus())
-                            newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
+                        newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
                     else
                         newBlocks.add(board0.blocksAt(curPos).tail());
       
@@ -291,6 +304,5 @@ public final class GameState {
         }
         return hashMap;
     }
-    
-    
+  
 }
