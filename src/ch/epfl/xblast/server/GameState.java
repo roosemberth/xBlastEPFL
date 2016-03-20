@@ -19,16 +19,7 @@ import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
 
 /**
- * @author pedro
- *
- */
-/**
- * @author pedro
- *
- */
-/**
- * @author pedro
- *
+ * This class represents the game state at a given game tick
  */
 public final class GameState {
     private final int ticks;
@@ -47,55 +38,56 @@ public final class GameState {
     private static final Block[] transformBlocks = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
     
     /**
-     * Constructs a new Player, using the given vaues
-     * @param ticks
-     * @param board
-     * @param players
-     * @param bombs
-     * @param explosions
-     * @param blasts
+     * Constructs a new Game state given Specified Conditions
+     * @param ticks			Game elapsed ticks
+     * @param board			Game Board
+     * @param players		Game players
+     * @param bombs			Boards currently placed on Board
+     * @param explosions	Explosions currently taking place
+     * @param blasts		Blasts (Explosion Fragments) Moving on the board
      */
     public GameState(int ticks, Board board, List<Player> players, List<Bomb> bombs,
                     List<Sq<Sq<Cell>>> explosions, List<Sq<Cell>> blasts){
-        if(ticks < 0) throw new IllegalArgumentException("Can't start at negative ticks");
+        if(ticks < 0)
+        	throw new IllegalArgumentException("Can't start at negative ticks");
+        if (players.size() != 4) 
+        	throw new IllegalArgumentException("Invalid number of players");
+
         this.ticks = ticks;
         this.board = Objects.requireNonNull(board);
-        this.players = Collections.unmodifiableList(new ArrayList(players));
-        if(this.players.size() != 4) throw new IllegalArgumentException("Unvalid number of players");
-        this.bombs = Collections.unmodifiableList(new ArrayList(bombs));
-        this.explosions = Collections.unmodifiableList(new ArrayList(explosions));
-        this.blasts = Collections.unmodifiableList(new ArrayList(blasts));
+        this.players = Collections.unmodifiableList(new ArrayList<Player>(players));
+        this.bombs = Collections.unmodifiableList(new ArrayList<Bomb>(bombs));
+        this.explosions = Collections.unmodifiableList(new ArrayList<Sq<Sq<Cell>>>(explosions));
+        this.blasts = Collections.unmodifiableList(new ArrayList<Sq<Cell>>(blasts));
     }
     
     /**
-     * Constructs a new Player, using the default values
-     * @param board
-     * @param players
+     * Construct a Beginning-of-times Game state
+     * @param board		Game Board
+     * @param players	Game Pkayers
      */
     public GameState(Board board, List<Player> players){
         this(0, board, players, new ArrayList<Bomb>(),new ArrayList<Sq<Sq<Cell>>>(), new ArrayList <Sq<Cell>>());
     }
     
+    /**
+     * @return Current Game ticks
+     */
     public int ticks(){
         return ticks;
     }
     
     /**
-     * @return whether or not the game is over
+     * @return Whether or not the game is over
      */
     public boolean isGameOver(){
         if(ticks == Ticks.TOTAL_TICKS)
             return true;
-        int numPlayers = 0;
-        for(Player p : players){
-            if(p.isAlive())
-                numPlayers++;
-        }
-        return numPlayers <= 1;
+        return alivePlayers().size() <= 1;
     }
  
     /**
-     * @return remainingTime in seconds
+     * @return Remaining Game time in seconds
      */
     public double remainingTime(){
         return (double)(Ticks.TOTAL_TICKS-ticks)/Ticks.TICKS_PER_SECOND;
@@ -113,55 +105,66 @@ public final class GameState {
     }
 
     /**
-     * @return the game board
+     * @return The game board
      */
     public Board board(){
         return board;
     }
 
     /**
-     * @return the list of players
+     * @return a list of players
      */
     public List<Player> players(){
-        return Collections.unmodifiableList(((new ArrayList(players))));
+        return Collections.unmodifiableList((players));
     }
     
     /**
      * @return the list of currently alivePlayers
      */
     public List<Player> alivePlayers(){
-        List<Player> alive = new ArrayList<>();
+        List<Player> alivePlayers = new ArrayList<>(4);
         for(Player p : players){
             if(p.isAlive())
-                alive.add(p);
+                alivePlayers.add(p);
         }
-        return Collections.unmodifiableList(alive);
+        return alivePlayers;
     }
     
+    /**
+     * @return	A Map containing Fused bombs and their positions (in no particular order)
+     */
     public Map<Cell, Bomb> bombedCells(){
-        Map<Cell,Bomb> bombedCells = new HashMap<>();
+        Map<Cell,Bomb> bombedCells = new HashMap<>(bombs.size());
         for(Bomb b : bombs){
             bombedCells.put(b.position(), b);
         }
         return bombedCells;
     }
     
+    /**
+     * @return 	A ser containing currently Blasted cells
+     */
     public Set<Cell> blastedCells(){
-        Set<Cell> blastedCells = new HashSet<>();
+        Set<Cell> blastedCells = new HashSet<>(blasts.size());
         for(Sq<Cell> c : blasts){
             blastedCells.add(c.head());
         }
         return blastedCells;
     }
     
+    /**
+     * The next GameState based in current one
+     * @param speedChangeEvents 	A Player-(Opt)Direction Map Containing Player Movements
+     * @param bombDropEvents		Players that dropped a bomb
+     * @return 	The Game state at the next Game tick
+     */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
-        List<Player> orderedPlayers = new ArrayList<>();
+        List<Player> orderedPlayers = new ArrayList<>(4);
         
         for(PlayerID id : playerPermutations.get(indexPermutation)){
             orderedPlayers.add(listToHash(players).get(id));
         }
-        
 
         List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
         Set <Cell> blastedCells1 = new HashSet<>();
@@ -183,12 +186,8 @@ public final class GameState {
         
         Board board1 = nextBoard(board,consumedBonuses,blastedCells1);
         
-        
-
         List<Bomb> bombs1 = newlyDroppedBombs(players, bombDropEvents, bombs);     
-        
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);       
-
         
         for(Bomb b : bombs){
             if(b.fuseLengths().isEmpty() || blastedCells().contains(b.position()))
@@ -198,14 +197,8 @@ public final class GameState {
             }
         }
         
-        
-        
-        
-        
         List<Player> newPlayers = nextPlayers(players, playerBonuses, null, board1, blastedCells1, speedChangeEvents);
        
-
-
         //Update so it uses next permutation for conflict
         indexPermutation = (indexPermutation+1)%playerPermutations.size();
         
@@ -213,20 +206,20 @@ public final class GameState {
     }
     
     private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0, List<Sq<Sq<Cell>>> explosions0){
-        List<Sq<Cell>> l = new ArrayList<>();
-        for(Sq<Cell> bl : blasts0){
-            Sq<Cell> t = bl.tail();
-            if(!t.isEmpty() && board0.blockAt(bl.head()).isFree())
-                l.add(t);
+        List<Sq<Cell>> nextBlasts = new ArrayList<>();
+        for(Sq<Cell> blast : blasts0){
+            Sq<Cell> t = blast.tail();
+            if(!t.isEmpty() && board0.blockAt(blast.head()).isFree())
+                nextBlasts.add(t);
         }
-        for(Sq<Sq<Cell>> bl : explosions0){
-            if(!bl.isEmpty()){
-                Sq<Cell> b = bl.head();
-                if(!b.isEmpty())
-                    l.add(b);
-            }
+        for(Sq<Sq<Cell>> explosion : explosions0){
+            if(explosion.isEmpty())
+            	continue;
+            Sq<Cell> b = explosion.head();
+            if(!b.isEmpty())
+                nextBlasts.add(b);
         }
-        return l;
+        return nextBlasts;
     }
     
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses, Set<Cell> blastedCells1){
@@ -248,7 +241,6 @@ public final class GameState {
                         newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
                     else
                         newBlocks.add(board0.blocksAt(curPos).tail());
-      
                 }
             }
         }
@@ -272,31 +264,33 @@ public final class GameState {
     
     //Check if needs to check player alive or list already has players alive
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
-        Map<PlayerID, Player> playerHash = listToHash(players0);
         List<Bomb> newBombs = new ArrayList<>();
         
         for(Player p : players0){
+        	if (p==null) continue;
             if(bombDropEvents.contains(p.id())){
                 int numBombs = 0;
-                
-                if(p != null){
-                    //Find how many bombs player has active
-                    boolean occupied = false;
-                    for(Bomb b : bombs0){
-                        if(b.ownerId() == p.id())
-                            numBombs++;
-                        if(b.position().equals(p.position()))
-                            occupied = true;
-                    }
-                    if(p.maxBombs() > numBombs && !occupied && p.isAlive())
-                        newBombs.add(p.newBomb());
+                //Find how many bombs player has active
+                boolean occupied = false;
+                for(Bomb b : bombs0){
+                    if(b.ownerId() == p.id())
+                        numBombs++;
+                    // Why we can't drop a bomb in the current cell?
+                    if(b.position().equals(p.position()))
+                        occupied = true;
                 }
+                if(p.maxBombs() > numBombs && !occupied && p.isAlive())
+                    newBombs.add(p.newBomb());
             }
         }
         return newBombs;
     }
     
     //Return HashMap containing <PlayerID, Player>
+    /**
+     * @param 	Players
+     * @return 	A Map of PlayerIDs and Players
+     */
     private static Map<PlayerID, Player> listToHash(List<Player> players){
         Map<PlayerID,Player> hashMap = new HashMap<>();
         for(Player p : players){
@@ -304,5 +298,4 @@ public final class GameState {
         }
         return hashMap;
     }
-  
 }

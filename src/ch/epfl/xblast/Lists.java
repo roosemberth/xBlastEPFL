@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Provides tools for managing the Lists 
+ */
 public final class Lists {
     private Lists(){}
     
     /**
-     * returns the list mirrored, the 
+     * Returns the list mirrored, the 
      * last element in the original list not being repeated
-     * @param l
-     * @return
+     * ie. the sequence 3,2,1 will be converted to 3,2,1,2,3
+     * @param  Source list
+     * @return Mirrored list
      */
     public static <T> List<T> mirrored(List<T> l){
         if(l.isEmpty()) throw new IllegalArgumentException(
@@ -22,12 +26,11 @@ public final class Lists {
         result.addAll(mirrored);
         return Collections.unmodifiableList(result);
     }
-    //TO DO:CHECK EMPTY LIST
+
     /**
-     * returns all possible permutations
-     * of a given list
-     * @param l
-     * @return
+     * Returns all posible list permutations
+     * @param  Origin list
+     * @return Permutations of the original list
      */
     public static <T> List<List<T>> permutations(List<T> l){
         List<List<T>> list = new ArrayList<>();
