@@ -80,7 +80,7 @@ public final class Player {
      */
     public Sq<LifeState> statesForNextLife(){
         Sq <LifeState> l = Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(),LifeState.State.DYING));
-        if(lifeState().lives() == 1){
+        if(lifeState().lives() <= 1){
             return l.concat(Sq.constant(new LifeState(lives()-1,LifeState.State.DEAD)));
         }
         else{
@@ -176,7 +176,7 @@ public final class Player {
         }
         
         /**
-         * @return a moving directedposition of a player at location moving to dp
+         * @return a moving directedPosition of a player at location moving to dp
          */
         public static Sq<DirectedPosition> moving(DirectedPosition dp){
             return Sq.iterate(dp, x -> x.withPosition(x.position.neighbor(x.direction)));
@@ -200,7 +200,7 @@ public final class Player {
         
         /**
          * @param newPosition
-         * @return a new directedposition in a newPosition
+         * @return a new directedPosition in a newPosition
          */
         public DirectedPosition withPosition(SubCell newPosition){
             return new DirectedPosition(newPosition, direction);

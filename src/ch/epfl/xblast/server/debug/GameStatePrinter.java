@@ -12,10 +12,19 @@ import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
+
 public final class GameStatePrinter {
+
+    private static String red = "\u001b[31m";
+    private static String blinkBlue = "\u001b[5;37;44m";
+    private static String std = "\u001b[m";
+    private static String clear = "\u001b[2J";
+    
     private GameStatePrinter() {}
 
     public static void printGameState(GameState s) {
+        System.out.println(clear);
+        
         List<Player> ps = s.alivePlayers();
         Board board = s.board();
         Map<Cell,Bomb> bombs = s.bombedCells();
@@ -27,7 +36,19 @@ public final class GameStatePrinter {
                 //check if c has a bomb, if so draw different color
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
-                        System.out.print(stringForPlayer(p));
+                        System.out.print(blinkBlue +stringForPlayer(p)+ std);
+                        continue xLoop;
+                    }
+                }
+                for(Map.Entry<Cell, Bomb> b : bombs.entrySet()){
+                    if (b.getKey().equals(c)) {
+                        System.out.print( red + "öö" + std);
+                        continue xLoop;
+                    }
+                }
+                for(Cell bC : blastedCells){
+                    if (bC.equals(c)) {
+                        System.out.print("**");
                         continue xLoop;
                     }
                 }
@@ -37,12 +58,7 @@ public final class GameStatePrinter {
             System.out.println();
         }
         Iterator it = bombs.entrySet().iterator();
-        for(Map.Entry<Cell, Bomb> b : bombs.entrySet()){
-            System.out.println("Bomb at: " + b.getKey());
-        }
-        for(Cell c : blastedCells){
-            System.out.println("Blasts at : " + c);
-        }
+        
     }
 
     private static String stringForPlayer(Player p) {

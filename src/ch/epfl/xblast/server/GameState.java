@@ -17,6 +17,8 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.server.Player.DirectedPosition;
+import ch.epfl.xblast.server.Player.LifeState;
 
 /**
  * This class represents the game state at a given game tick
@@ -176,6 +178,7 @@ public final class GameState {
         Set<Cell> consumedBonuses = new HashSet<>();
         Map<PlayerID, Bonus> playerBonuses = new HashMap<>();
         
+        //check the bonus collisions
         for(Player p : orderedPlayers){
             Cell playerPos = p.position().containingCell();
             if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos)){
@@ -186,7 +189,7 @@ public final class GameState {
         
         Board board1 = nextBoard(board,consumedBonuses,blastedCells1);
         
-        List<Bomb> bombs1 = newlyDroppedBombs(players, bombDropEvents, bombs);     
+        List<Bomb> bombs1 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);     
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);       
         
         for(Bomb b : bombs){
@@ -196,8 +199,11 @@ public final class GameState {
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
-        
-        List<Player> newPlayers = nextPlayers(players, playerBonuses, null, board1, blastedCells1, speedChangeEvents);
+        Set<Cell> bombedCells1 = new HashSet<>();
+        for(Bomb b : bombs1){
+            bombedCells1.add(b.position());
+        }
+        List<Player> newPlayers = nextPlayers(players, playerBonuses, bombedCells1, board1, blastedCells1, speedChangeEvents);
        
         //Update so it uses next permutation for conflict
         indexPermutation = (indexPermutation+1)%playerPermutations.size();
@@ -249,10 +255,92 @@ public final class GameState {
     }
     
     private static List<Player> nextPlayers(List<Player> players0, Map<PlayerID, Bonus> playerBonuses, 
-            Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1, Map<PlayerID, Optional<Direction>> speedChangeEvents){
-        return players0;
+        Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1, Map<PlayerID, Optional<Direction>> speedChangeEvents){
+        List<Player> players1 = new ArrayList<>();
+          
+        //Update players
+        for(Player p : players0){
+            Player newP = null;
+            
+            Sq<DirectedPosition> newDPos = p.directedPositions();
+            Sq<LifeState> newLifestate = null;
+
+            int maxBombs1 = p.maxBombs(), maxRange1 = p.bombRange();
+            //Check changeEvents
+            if(p.lifeState().canMove()){
+                newDPos = nextSqDPos(p, speedChangeEvents);
+                //Check collisions and update position
+                //Collision with blocks
+                newDPos = nextSqCollision(newDPos,bombedCells1,board1,blastedCells1);
+                
+                newLifestate = nextSqLifestate(p, newDPos,blastedCells1);
+
+                newP = new Player(p.id(), newLifestate ,newDPos,maxBombs1, maxRange1);
+                //Check bonuses
+                if(playerBonuses.containsKey(p.id())){
+                    newP = playerBonuses.get(p.id()).applyTo(newP);
+                }
+            }
+            else{
+                newP = new Player(p.id(),p.lifeStates().tail(),p.directedPositions(),p.maxBombs(),p.bombRange());
+            }
+            players1.add(newP);
+        }
+        
+        return players1;
+    }
+    private static Sq<DirectedPosition> nextSqDPos(Player p, Map<PlayerID, Optional<Direction>> speedChangeEvents){
+        Optional<Direction> speedChange = speedChangeEvents.get(p.id());
+        
+        if(speedChange != null && speedChange.isPresent()){
+            if(!speedChange.get().isParallelTo(p.direction())){
+                DirectedPosition centralPos = p.directedPositions().findFirst(n -> n.position().isCentral());
+                return p.directedPositions().takeWhile(c -> !c.equals(centralPos)).
+                        concat(Player.DirectedPosition.moving(new DirectedPosition( centralPos.position(), speedChange.get())));
+            }
+            else{
+                return DirectedPosition.moving(new DirectedPosition(p.position(), speedChange.get()));
+            }
+        }
+        else{
+            return p.directedPositions();
+        }
     }
     
+    private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> newDPos, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
+        boolean collision = false;
+
+        if(board1.blockAt(newDPos.head().position().containingCell().
+                neighbor(newDPos.head().direction())).canHostPlayer()){
+            //Collision with block
+            if(newDPos.head().position().isCentral()){
+                    return newDPos.tail();
+            }
+            else{
+                if(bombedCells1.contains(newDPos.head().position().containingCell().
+                        neighbor(newDPos.head().direction()))){
+                    //Collision with bombs
+                    if(newDPos.head().position().distanceToCentral() < 6){
+                        return newDPos.tail();
+                    }
+                }
+                else{
+                    return newDPos.tail();
+                }
+            }
+        }
+        return newDPos;
+    }
+    
+    private static Sq<LifeState> nextSqLifestate(Player p, Sq<DirectedPosition> newDPos, Set<Cell> blastedCells1){
+      //Collision with particles
+        if(blastedCells1.contains(newDPos.head().position().containingCell())){
+            return p.statesForNextLife();
+        }
+        else{
+            return p.lifeStates();
+        }
+    }
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
         for(Sq<Sq<Cell>> c : explosions0){
@@ -283,6 +371,7 @@ public final class GameState {
                     newBombs.add(p.newBomb());
             }
         }
+        
         return newBombs;
     }
     

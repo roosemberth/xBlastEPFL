@@ -21,7 +21,7 @@ public class TestStepFour {
         List<List<Integer>> permutations = Lists.permutations(Arrays.asList(1,2,3,4,5,6,7,8));
         while(scan.hasNextLine()){
             List<Integer> newLine = new ArrayList<>();
-            for(int i = 0; i < 8; i++){
+            for(int i = 0; i < 8 ; i++){
                 newLine.add(scan.nextInt());
             }
             assertTrue(permutations.contains(newLine));
