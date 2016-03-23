@@ -19,7 +19,7 @@ public final class SubCell {
     }  
     
     public int distanceToCentral(){
-        return Math.abs((x%COLUMNS)-(COLUMNS/2)) + Math.abs((y%COLUMNS)-(COLUMNS/2));
+        return Math.abs((x%COLUMNS)-(COLUMNS/2)) + Math.abs((y%COLUMNS)-(ROWS/2));
     }
     
     public int x(){

@@ -19,6 +19,7 @@ import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
+import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * This class represents the game state at a given game tick
@@ -83,7 +84,7 @@ public final class GameState {
      * @return Whether or not the game is over
      */
     public boolean isGameOver(){
-        if(ticks == Ticks.TOTAL_TICKS)
+        if(ticks >= Ticks.TOTAL_TICKS)
             return true;
         return alivePlayers().size() <= 1;
     }
@@ -144,7 +145,7 @@ public final class GameState {
     }
     
     /**
-     * @return 	A ser containing currently Blasted cells
+     * @return 	A set containing currently Blasted cells
      */
     public Set<Cell> blastedCells(){
         Set<Cell> blastedCells = new HashSet<>(blasts.size());
@@ -168,6 +169,7 @@ public final class GameState {
             orderedPlayers.add(listToHash(players).get(id));
         }
 
+        //1. Evolution des particules d'explosion
         List<Sq<Cell>> blasts1 = nextBlasts(blasts, board, explosions);
         Set <Cell> blastedCells1 = new HashSet<>();
         
@@ -187,11 +189,14 @@ public final class GameState {
             }
         }
         
+        //2. Evolution of the board
         Board board1 = nextBoard(board,consumedBonuses,blastedCells1);
         
+        //3. Evolution of the explosions
+        List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);   
+        //4. Evolution of existing bombs(f
         List<Bomb> bombs1 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);     
-        List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);       
-        
+                 
         for(Bomb b : bombs){
             if(b.fuseLengths().isEmpty() || blastedCells().contains(b.position()))
                 explosions1.addAll(b.explosion());
@@ -199,10 +204,13 @@ public final class GameState {
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
+        
         Set<Cell> bombedCells1 = new HashSet<>();
         for(Bomb b : bombs1){
             bombedCells1.add(b.position());
         }
+        
+        //5. Evolution of players
         List<Player> newPlayers = nextPlayers(players, playerBonuses, bombedCells1, board1, blastedCells1, speedChangeEvents);
        
         //Update so it uses next permutation for conflict
@@ -317,12 +325,20 @@ public final class GameState {
                     return newDPos.tail();
             }
             else{
-                if(bombedCells1.contains(newDPos.head().position().containingCell().
-                        neighbor(newDPos.head().direction()))){
+                if(bombedCells1.contains(newDPos.head().position().containingCell())){
                     //Collision with bombs
-                    if(newDPos.head().position().distanceToCentral() < 6){
+                    if(newDPos.head().position().distanceToCentral() == 6){
+                        //IS he heading away from center
+                        if(newDPos.head().position().distanceToCentral() < newDPos.tail().head().position().distanceToCentral() ){
+                            return newDPos.tail();
+                        }
+                    }
+                    else{
                         return newDPos.tail();
                     }
+                    /*if(newDPos.head().position().distanceToCentral() < 6){
+                        return newDPos.tail();
+                    }*/
                 }
                 else{
                     return newDPos.tail();
@@ -334,12 +350,12 @@ public final class GameState {
     
     private static Sq<LifeState> nextSqLifestate(Player p, Sq<DirectedPosition> newDPos, Set<Cell> blastedCells1){
       //Collision with particles
-        if(blastedCells1.contains(newDPos.head().position().containingCell())){
-            return p.statesForNextLife();
+        if(p.lifeState().state() == State.VULNERABLE){
+            if(blastedCells1.contains(newDPos.head().position().containingCell())){
+                return p.statesForNextLife();
+            }
         }
-        else{
-            return p.lifeStates();
-        }
+        return p.lifeStates().tail();
     }
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
