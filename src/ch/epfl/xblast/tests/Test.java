@@ -1,5 +1,6 @@
 package ch.epfl.xblast.tests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,8 @@ public class Test {
 
     public static void main(String[] args) throws InterruptedException {
 
+        RandomEventGenerator rand = new RandomEventGenerator(2016, 30,100);
+        
         Block __ = Block.FREE;
         Block XX = Block.INDESTRUCTIBLE_WALL;
         Block xx = Block.DESTRUCTIBLE_WALL;
@@ -32,17 +35,26 @@ public class Test {
         List<Player> lP = new ArrayList<Player>();
         
         //Initialize players
-        for(int i = 0; i < 4; i++)
-            lP.add(new Player(PlayerID.values()[i], 5,new Cell(1+(i%2 == 1 ? 12 : 0),1+(i>1 ? 10: 0)),2,2));
+        lP.add(new Player(PlayerID.values()[0], 3,new Cell(1,1),2,3));
+        lP.add(new Player(PlayerID.values()[1], 3,new Cell(13,1),2,3));
+        lP.add(new Player(PlayerID.values()[2], 3,new Cell(13,11),2,3));
+        lP.add(new Player(PlayerID.values()[3], 3,new Cell(1,11),2,3));
+        
         GameState gs = new GameState(board, lP);
 
-        RandomEventGenerator rand = new RandomEventGenerator(2016, 30,100);
-        
         while(!gs.isGameOver()){
-            gs = gs.next(rand.randomSpeedChangeEvents(),rand.randomBombDropEvents());
+
             GameStatePrinter.printGameState(gs);
-            Thread.sleep(50);
+            gs = gs.next(rand.randomSpeedChangeEvents(),rand.randomBombDropEvents());
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
+
+        GameStatePrinter.printGameState(gs);
         
     }
 }

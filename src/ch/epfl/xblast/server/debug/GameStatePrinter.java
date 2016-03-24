@@ -22,7 +22,7 @@ public final class GameStatePrinter {
     private static String yellow = "\u001b[1;;43m";
     private static String blackWhite = "\u001b[1;37;40m";
     private static String std = "\u001b[m";
-    private static String clear = "\u001b[2J";
+    private static String clear = "\u001b[2J\u001b[1;1H";
     
     private GameStatePrinter() {}
 
@@ -34,14 +34,15 @@ public final class GameStatePrinter {
         Map<Cell,Bomb> bombs = s.bombedCells();
         Set<Cell> blastedCells = s.blastedCells();
         
-        
         System.out.println(clear);
+        
         System.out.println("Remaining ticks : " + s.remainingTime());
         for(Player p : ps){
             System.out.println("Joueur " + p.id() + " : " + p.position() + " : " + p.position().containingCell());
         }
         
-        System.out.println(bombs);
+        if(bombs.size() == 2)
+            System.out.println(bombs);
         
         for (int y = 0; y < Cell.ROWS; ++y) {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
@@ -71,6 +72,7 @@ public final class GameStatePrinter {
             System.out.println();
         }
         Iterator it = bombs.entrySet().iterator();
+
         
     }
 

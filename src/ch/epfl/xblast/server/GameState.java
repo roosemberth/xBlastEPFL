@@ -297,31 +297,38 @@ public final class GameState {
         
         return players1;
     }
+    //When speedChangeEvents doesnt exist...  stop player??
     private static Sq<DirectedPosition> nextSqDPos(Player p, Map<PlayerID, Optional<Direction>> speedChangeEvents){
-        Optional<Direction> speedChange = speedChangeEvents.get(p.id());
-        
-        if(speedChange != null && speedChange.isPresent()){
-            if(!speedChange.get().isParallelTo(p.direction())){
-                DirectedPosition centralPos = p.directedPositions().findFirst(n -> n.position().isCentral());
-                return p.directedPositions().takeWhile(c -> !c.equals(centralPos)).
-                        concat(Player.DirectedPosition.moving(new DirectedPosition( centralPos.position(), speedChange.get())));
+        Direction speedChange = null;
+
+        DirectedPosition centralPos = p.directedPositions().findFirst(n -> n.position().isCentral());
+        if(speedChangeEvents.containsKey(p.id())){
+            speedChange = speedChangeEvents.get(p.id()).orElse(null);
+            if(speedChange != null){
+                if(!speedChange.isParallelTo(p.direction())){
+                    return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
+                            concat(Player.DirectedPosition.moving(new DirectedPosition( centralPos.position(), speedChange)));
+                }
+                else{
+                    return DirectedPosition.moving(new DirectedPosition(p.position(), speedChange));
+                }
             }
             else{
-                return DirectedPosition.moving(new DirectedPosition(p.position(), speedChange.get()));
+                return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
+                        concat(Player.DirectedPosition.stopped(centralPos));
             }
         }
-        else{
-            return p.directedPositions();
-        }
+        
+       return p.directedPositions();
     }
     
     private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> newDPos, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
-        boolean collision = false;
 
         if(board1.blockAt(newDPos.head().position().containingCell().
                 neighbor(newDPos.head().direction())).canHostPlayer()){
             //Collision with block
             if(newDPos.head().position().isCentral()){
+                    System.out.println("Moving at center" + newDPos.head().position());
                     return newDPos.tail();
             }
             else{
@@ -336,9 +343,6 @@ public final class GameState {
                     else{
                         return newDPos.tail();
                     }
-                    /*if(newDPos.head().position().distanceToCentral() < 6){
-                        return newDPos.tail();
-                    }*/
                 }
                 else{
                     return newDPos.tail();
