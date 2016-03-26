@@ -61,7 +61,7 @@ public final class GameStatePrinter {
                     }
                 }
                 for(Cell bC : blastedCells){
-                    if (bC.equals(c)) {
+                    if (bC.equals(c) && !board.blockAt(c).isFree()) {
                         System.out.print("**");
                         continue xLoop;
                     }

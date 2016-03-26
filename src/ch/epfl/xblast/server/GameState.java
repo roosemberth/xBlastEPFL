@@ -297,7 +297,7 @@ public final class GameState {
         
         return players1;
     }
-    //When speedChangeEvents doesnt exist...  stop player??
+
     private static Sq<DirectedPosition> nextSqDPos(Player p, Map<PlayerID, Optional<Direction>> speedChangeEvents){
         Direction speedChange = null;
 
@@ -305,7 +305,9 @@ public final class GameState {
         if(speedChangeEvents.containsKey(p.id())){
             speedChange = speedChangeEvents.get(p.id()).orElse(null);
             if(speedChange != null){
+                System.out.println(p.id() + "Changing direction " + speedChange);
                 if(!speedChange.isParallelTo(p.direction())){
+                    System.out.println("Not parallel... next central is " + centralPos.position());
                     return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
                             concat(Player.DirectedPosition.moving(new DirectedPosition( centralPos.position(), speedChange)));
                 }
@@ -314,6 +316,7 @@ public final class GameState {
                 }
             }
             else{
+                System.out.println(p.id() +  " stopping...");
                 return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
                         concat(Player.DirectedPosition.stopped(centralPos));
             }
@@ -324,29 +327,27 @@ public final class GameState {
     
     private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> newDPos, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
 
-        if(board1.blockAt(newDPos.head().position().containingCell().
-                neighbor(newDPos.head().direction())).canHostPlayer()){
-            //Collision with block
-            if(newDPos.head().position().isCentral()){
-                    System.out.println("Moving at center" + newDPos.head().position());
-                    return newDPos.tail();
+        if(newDPos.head().position().isCentral()){
+            if(board1.blockAt(newDPos.head().position().containingCell().
+                    neighbor(newDPos.head().direction())).canHostPlayer()){
+                return newDPos.tail();
             }
-            else{
-                if(bombedCells1.contains(newDPos.head().position().containingCell())){
-                    //Collision with bombs
-                    if(newDPos.head().position().distanceToCentral() == 6){
-                        //IS he heading away from center
-                        if(newDPos.head().position().distanceToCentral() < newDPos.tail().head().position().distanceToCentral() ){
-                            return newDPos.tail();
-                        }
-                    }
-                    else{
+        }
+        else{
+            if(bombedCells1.contains(newDPos.head().position().containingCell())){
+                //Collision with bombs
+                if(newDPos.head().position().distanceToCentral() == 6){
+                    //IS he heading away from center
+                    if(newDPos.head().position().distanceToCentral() < newDPos.tail().head().position().distanceToCentral() ){
                         return newDPos.tail();
                     }
                 }
                 else{
                     return newDPos.tail();
                 }
+            }
+            else{
+                return newDPos.tail();
             }
         }
         return newDPos;
