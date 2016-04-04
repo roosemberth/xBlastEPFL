@@ -203,15 +203,20 @@ public final class GameState {
         
         //3. Evolution of the explosions
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);   
-        //4. Evolution of existing bombs(f
-        List<Bomb> bombs1 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);     
+        //4. Evolution of existing bombs
+        List<Bomb> newlyDropped = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
+
+        List<Bomb> bombs1 = new ArrayList<>();
                  
         for(Bomb b : bombs){
-            if(b.fuseLengths().isEmpty() || blastedCells().contains(b.position()))
+            if(b.fuseLengths().tail().isEmpty() || blastedCells().contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
+        }
+        for(Bomb b : newlyDropped){
+            bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
         }
         
         Set<Cell> bombedCells1 = new HashSet<>();
