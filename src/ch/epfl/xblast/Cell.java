@@ -180,7 +180,7 @@ public final class Cell {
     }
     
     public String toString(){
-        return "("+x+","+y+")";
+        return "("+String.format("%02d", x)+","+String.format("%02d", y)+")";
     }
     public int hashCode(){
         return rowMajorIndex();

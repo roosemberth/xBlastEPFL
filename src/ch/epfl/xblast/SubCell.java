@@ -70,7 +70,7 @@ public final class SubCell {
     }
     
     public String toString(){
-        return "(" + x + "," + y + ")";
+        return "(" + String.format("%03d", x) + "," + String.format("%03d", y) + ")";
     }
     public int hashCode(){
         return x + BOARD_WIDTH*y;

@@ -95,7 +95,7 @@ public final class GameState {
     public double remainingTime(){
         return (double)(Ticks.TOTAL_TICKS-ticks)/Ticks.TICKS_PER_SECOND;
     }
-  
+ 
     /**
      * @return winner, if he exists
      */
@@ -137,7 +137,16 @@ public final class GameState {
      * @return	A Map containing Fused bombs and their positions (in no particular order)
      */
     public Map<Cell, Bomb> bombedCells(){
-        Map<Cell,Bomb> bombedCells = new HashMap<>(bombs.size());
+        Map<Cell,Bomb> bombedCells = new HashMap<Cell,Bomb>(bombs.size()){
+            // Serializable derived class
+            private static final long serialVersionUID = 2821855353073180883L;
+            @Override public String toString(){
+                this.entrySet().stream().forEach(entry -> {
+                    System.out.println(entry.getValue().ownerId()+"@"+entry.getKey());
+                });
+                return null;
+            }
+        };
         for(Bomb b : bombs){
             bombedCells.put(b.position(), b);
         }
@@ -243,10 +252,9 @@ public final class GameState {
                 Cell curPos = new Cell(x,y);
                 if (consumedBonuses.contains(curPos)){
                     newBlocks.add(Sq.constant(Block.FREE));
-                }
-                else if(!blastedCells1.contains(curPos))
+                } else if (!blastedCells1.contains(curPos)){
                     newBlocks.add(board0.blocksAt(curPos).tail());
-                else{
+                } else {
                     if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
                         newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
                                 Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
@@ -262,10 +270,28 @@ public final class GameState {
         return nextBoard;
     }
     
-    private static List<Player> nextPlayers(List<Player> players0, Map<PlayerID, Bonus> playerBonuses, 
-        Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1, Map<PlayerID, Optional<Direction>> speedChangeEvents){
+    /**
+     * Gets the next list of players with the next tick attributes applied
+     * @param players0          current players
+     * @param playerBonuses
+     * @param bombedCells1
+     * @param board1
+     * @param blastedCells1
+     * @param speedChangeEvents
+     * @return
+     */
+    private static List<Player> nextPlayers(
+            List<Player> players0,
+            Map<PlayerID, Bonus> playerBonuses, 
+            Set<Cell> bombedCells1,
+            Board board1,
+            Set<Cell> blastedCells1,
+            Map<PlayerID,
+            Optional<Direction>> speedChangeEvents
+            ){
+
         List<Player> players1 = new ArrayList<>();
-          
+        
         //Update players
         for(Player p : players0){
             Player newP = null;
@@ -273,16 +299,19 @@ public final class GameState {
             Sq<DirectedPosition> newDPos = p.directedPositions();
             Sq<LifeState> newLifestate = null;
 
-            int maxBombs1 = p.maxBombs(), maxRange1 = p.bombRange();
+            final int maxBombs1 = p.maxBombs();
+            final int maxRange1 = p.bombRange();
+
             //Check changeEvents
             if(p.lifeState().canMove()){
+                // Change his current path sequence
                 newDPos = nextSqDPos(p, speedChangeEvents);
-                //Check collisions and update position
-                //Collision with blocks
+                // Get his future path (checking if he Can take that path.
                 newDPos = nextSqCollision(newDPos,bombedCells1,board1,blastedCells1);
-                
+                // Get his next state wrt explosions going on
                 newLifestate = nextSqLifestate(p, newDPos,blastedCells1);
 
+                // Create new player entity for the next state
                 newP = new Player(p.id(), newLifestate ,newDPos,maxBombs1, maxRange1);
                 //Check bonuses
                 if(playerBonuses.containsKey(p.id())){
@@ -298,6 +327,16 @@ public final class GameState {
         return players1;
     }
 
+    /**
+     * Calculates current and future positions from players and Give actions
+     * Applies the speed change event so it will change it's current direction if the player reverses it's direction 
+     * or is in a central subcell. Otherwire return the path continuing to the center of the cell and then apply the
+     * specified speed change.
+     * 
+     * @param p                     Player
+     * @param speedChangeEvents     Speed change events
+     * @return                      Current and future positions
+     */
     private static Sq<DirectedPosition> nextSqDPos(Player p, Map<PlayerID, Optional<Direction>> speedChangeEvents){
         Direction speedChange = null;
 
@@ -325,43 +364,68 @@ public final class GameState {
        return p.directedPositions();
     }
     
-    private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> newDPos, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
+    /**
+     * 
+     * @param movingPath       current and future positions
+     * @param bombedCells1
+     * @param board1
+     * @param blastedCells1
+     * @return                 future positions
+     */
+    private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> movingPath, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
 
-        if(newDPos.head().position().isCentral()){
-            if(board1.blockAt(newDPos.head().position().containingCell().
-                    neighbor(newDPos.head().direction())).canHostPlayer()){
-                return newDPos.tail();
+        if(movingPath.head().position().isCentral()){
+            if(board1.blockAt(movingPath.head().position().containingCell().
+                    neighbor(movingPath.head().direction())).canHostPlayer()){
+                // Okay to move
+                return movingPath.tail();
             }
-        }
-        else{
-            if(bombedCells1.contains(newDPos.head().position().containingCell())){
+        } else {
+            if(bombedCells1.contains(movingPath.head().position().containingCell())){
                 //Collision with bombs
-                if(newDPos.head().position().distanceToCentral() == 6){
-                    //IS he heading away from center
-                    if(newDPos.head().position().distanceToCentral() < newDPos.tail().head().position().distanceToCentral() ){
-                        return newDPos.tail();
-                    }
+                final int distanceToCentral = movingPath.head().position().distanceToCentral();
+                if(distanceToCentral == 6){
+                    //Is he heading away from center?
+                    if(distanceToCentral < movingPath.tail().head().position().distanceToCentral() ){
+                        // it's okay to continue
+                        return movingPath.tail();
+                    } else
+                        // we can't move, stay in the same state
+                        return movingPath;
                 }
                 else{
-                    return newDPos.tail();
+                    // okay to move
+                    return movingPath.tail();
                 }
             }
             else{
-                return newDPos.tail();
+                // okay to move
+                return movingPath.tail();
             }
         }
-        return newDPos;
+        // we can't move, stay in the same state
+        return movingPath;
     }
     
+    /**
+     * Calculates the next sequence of player lifestates
+     * @param p
+     * @param newDPos
+     * @param blastedCells1
+     * @return
+     */
     private static Sq<LifeState> nextSqLifestate(Player p, Sq<DirectedPosition> newDPos, Set<Cell> blastedCells1){
-      //Collision with particles
+      // Hit by a particle?
         if(p.lifeState().state() == State.VULNERABLE){
             if(blastedCells1.contains(newDPos.head().position().containingCell())){
+                // Die...
                 return p.statesForNextLife();
             }
         }
+        // continue your life
         return p.lifeStates().tail();
     }
+
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
         for(Sq<Sq<Cell>> c : explosions0){

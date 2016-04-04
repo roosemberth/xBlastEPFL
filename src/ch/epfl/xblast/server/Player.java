@@ -76,6 +76,10 @@ public final class Player {
     }
 
     /**
+     * Calculates the next lifestates.
+     * this will include a sequence of dying ticks and
+     *  if the player's in his last life it ends with an infinite dead state list. 
+     *  else, it'll end with a new invulnerable + infinite vulnerable sequence
      * @return a sequence of the next LifeState's
      */
     public Sq<LifeState> statesForNextLife(){
@@ -268,7 +272,11 @@ public final class Player {
             INVULNERABLE,
             VULNERABLE,
             DYING,
-            DEAD;
+            DEAD,
+            ;
+            @Override public String toString(){
+                return String.format("%12s", super.toString());
+            }
         }
     }
 }

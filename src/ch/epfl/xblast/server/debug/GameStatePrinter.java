@@ -15,6 +15,8 @@ import ch.epfl.xblast.server.Player;
 
 public final class GameStatePrinter {
 
+    private static String cyanWhite = "\u001b[1;37;46m";
+    private static String redkWhite = "\u001b[1;37;41m";
     private static String blueWhite = "\u001b[37;44m";
     private static String tealBlack = "\u001b[0;37;44m";
     private static String redWhite = "\u001b[0;37;41m";
@@ -27,8 +29,6 @@ public final class GameStatePrinter {
     private GameStatePrinter() {}
 
     public static void printGameState(GameState s) {
-        
-
         List<Player> ps = s.alivePlayers();
         Board board = s.board();
         Map<Cell,Bomb> bombs = s.bombedCells();
@@ -36,21 +36,21 @@ public final class GameStatePrinter {
         
         System.out.println(clear);
         
-        System.out.println("Remaining ticks : " + s.remainingTime());
-        for(Player p : ps){
-            System.out.println("Joueur " + p.id() + " : " + p.position() + " : " + p.position().containingCell());
-        }
-        
-        if(bombs.size() == 2)
-            System.out.println(bombs);
-        
         for (int y = 0; y < Cell.ROWS; ++y) {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                 Cell c = new Cell(x, y);
                 //check if c has a bomb, if so draw different color
                 for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
-                        System.out.print(tealBlack +stringForPlayer(p)+ std);
+                        String color = tealBlack;
+                        switch (p.lifeState().state()){
+                            case DEAD:         color=blackWhite; break;
+                            case DYING:        color=redWhite;   break;
+                            case INVULNERABLE: color=cyanWhite;  break;
+                            case VULNERABLE:   color=tealBlack;  break;
+                            default: throw new InternalError("Unexpected Player Status Value");
+                        }
+                        System.out.print(color +stringForPlayer(p)+ std);
                         continue xLoop;
                     }
                 }
@@ -72,8 +72,16 @@ public final class GameStatePrinter {
             System.out.println();
         }
         Iterator it = bombs.entrySet().iterator();
-
+       
+        System.out.println("Remaining ticks : " + String.format("%3.4f", s.remainingTime()));
+        for(Player p : ps)
+            System.out.println(""
+                    + p.id() + " (" + p.lives() + "," + p.lifeState().state() + "): " 
+                    + p.position() + " : " + p.position().containingCell()
+            );
         
+        if(bombs.size() == 2)
+            System.out.println(bombs);
     }
 
     private static String stringForPlayer(Player p) {
