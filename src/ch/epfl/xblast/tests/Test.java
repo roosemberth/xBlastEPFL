@@ -57,7 +57,7 @@ public class Test {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         Callable<String> stdInReader = new Callable<String>(){
             @Override public String call() throws Exception {
-                return "" + new Character((char) System.in.read());
+                return new String("" + (char)System.in.read());
             }
         };
         
