@@ -41,6 +41,7 @@ public final class GameStatePrinter {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                Cell c = new Cell(x, y);
                //check if c has a bomb, if so draw different color
+               if(false)
                for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
                         String color = tealBlack;
@@ -55,6 +56,7 @@ public final class GameStatePrinter {
                         continue xLoop;
                     }
                 }
+
                 for(Map.Entry<Cell, Bomb> b : bombs.entrySet()){
                     if (b.getKey().equals(c)) {
                         System.out.print( redWhite + "öö" + std);
@@ -62,7 +64,7 @@ public final class GameStatePrinter {
                     }
                 }
                 for(Cell bC : blastedCells){
-                    if (bC.equals(c)) {
+                    if (bC.equals(c) && board.blockAt(c).isFree()) {
                         System.out.print("**");
                         continue xLoop;
                     }

@@ -52,12 +52,13 @@ public class newTest {
         bombDropEvent.add(PlayerID.PLAYER_4);
         Map<PlayerID,Optional<Direction>> speedChangeEvent = new HashMap<>();
 
-        GameStatePrinter.printGameState(gs);
-        
 //        gs = gs.next(rand.randomSpeedChangeEvents(), bombDropEvent);
 //        bombDropEvent = new HashSet<>();
         
 
+        speedChangeEvent = rand.randomSpeedChangeEvents();
+        bombDropEvent = rand.randomBombDropEvents();
+        
         System.in.read();
         
         while(!gs.isGameOver()){

@@ -239,11 +239,10 @@ public final class GameState {
                 nextBlasts.add(t);
         }
         for(Sq<Sq<Cell>> explosion : explosions0){
-            if(explosion.isEmpty())
+            if(explosion.tail().isEmpty())
             	continue;
-            Sq<Cell> b = explosion.head();
-            if(!b.isEmpty())
-                nextBlasts.add(b);
+            Sq<Cell> b = explosion.tail().head();
+             nextBlasts.add(b);
         }
         return nextBlasts;
     }
@@ -427,7 +426,7 @@ public final class GameState {
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
         for(Sq<Sq<Cell>> c : explosions0){
-            if(!c.isEmpty())
+            if(!c.tail().isEmpty())
                 newList.add(c.tail());
         }
         return newList;
@@ -449,7 +448,6 @@ public final class GameState {
                         occupied = true;
                 }
                 if(p.maxBombs() > numBombs && !occupied && p.isAlive()){
-                    System.out.println("Got new bomb for " + p.id() + " " + p.position().containingCell());
                     newBombs.add(p.newBomb());
                 }
             }
