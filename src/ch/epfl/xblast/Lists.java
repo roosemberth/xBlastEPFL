@@ -20,9 +20,9 @@ public final class Lists {
     public static <T> List<T> mirrored(List<T> l){
         if(l.isEmpty()) throw new IllegalArgumentException(
                 "The list you tryed to mirror is empty");
-        List<T> mirrored = new ArrayList(l.subList(0, l.size()));
+        List<T> mirrored = new ArrayList<T>(l.subList(0, l.size()));
         Collections.reverse(mirrored);
-        List<T> result = new ArrayList(l.subList(0, l.size()-1));
+        List<T> result = new ArrayList<T>(l.subList(0, l.size()-1));
         result.addAll(mirrored);
         return Collections.unmodifiableList(result);
     }
