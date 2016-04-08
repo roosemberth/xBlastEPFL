@@ -173,9 +173,6 @@ public final class GameState {
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
         List<Player> orderedPlayers = new ArrayList<>(4);
-        List<Bomb> bombs0 = new ArrayList<>();
-        
-        bombs0.addAll(bombs);
         
         for(PlayerID id : playerPermutations.get(indexPermutation)){
             orderedPlayers.add(listToHash(players).get(id));
@@ -207,11 +204,10 @@ public final class GameState {
         //3. Evolution of the explosions
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);   
         //4. Evolution of existing bombs
-        List<Bomb> newlyDropped = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs0);
-        for(Bomb b : newlyDropped){
-            bombs0.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths(),b.range()));
-        }
 
+        List<Bomb> bombs0 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
+        bombs0.addAll(bombs);
+        
         List<Bomb> bombs1 = new ArrayList<>();
         for(Bomb b : bombs0){
             if(b.fuseLengths().tail().isEmpty() || blastedCells().contains(b.position()))
