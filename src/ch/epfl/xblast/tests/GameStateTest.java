@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class GameStateTest {
     private final static int PlayerInitialBombR = 3;
     private final static int PlayerInitialBombs = 3;
 
-    public GameStateTest() {
+    static {
         final Block XX = Block.INDESTRUCTIBLE_WALL;
         final Block __ = Block.FREE;
         final Block II = Block.DESTRUCTIBLE_WALL;
@@ -70,6 +71,26 @@ public class GameStateTest {
         for (Player player : players) {
             assertEquals(3, player.bombRange());
         }
+    }
+    
+    @Test
+    public void bombedCells(){
+        GameState game = new GameState(gameBoard, players);
+        Map<PlayerID, Optional<Direction>> player1South = new HashMap<>();
+        player1South.put(PlayerID.PLAYER_1, Optional.of(Direction.S));
+        Set<PlayerID> player1DropsBomb = new HashSet<>();
+        player1DropsBomb.add(PlayerID.PLAYER_1);
+        GameState next = game.next(player1South, player1DropsBomb);
+        Set<Entry<Cell, Bomb>>bombedCells = next.bombedCells().entrySet();
+        assertEquals(1, bombedCells.size());
+        bombedCells.forEach(entry -> {
+            assertTrue(entry.getKey().equals(Cell.ROW_MAJOR_ORDER.get(Cell.COLUMNS+1)));
+        });
+    }
+    
+    @Test
+    public void nextExplosions(){
+        
     }
 
     @Test
