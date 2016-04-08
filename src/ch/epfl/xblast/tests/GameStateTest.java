@@ -116,6 +116,7 @@ public class GameStateTest {
         for (int i = 0; i < Ticks.PLAYER_INVULNERABLE_TICKS + 1; ++i)
             next = next.next(noMovement, noBombDrops);
         next = next.next(player1South, player1DropsBomb);
+        assertEquals(1, next.bombedCells().entrySet().size());
 
         assertEquals(Optional.empty(), next.winner());
         //assertEquals(players, next.players());
@@ -138,31 +139,33 @@ public class GameStateTest {
             next = next.next(noMovement, noBombDrops);
 
         assertEquals(3, next.alivePlayers().size());
-        assertEquals(false, players.get(0).isAlive());
+        next.alivePlayers().stream().forEach(p -> {
+            assertFalse(PlayerID.PLAYER_1.equals(p.id()));
+        });
 
         Map<PlayerID, Optional<Direction>> player34North = new HashMap<>();
-        player1South.put(PlayerID.PLAYER_3, Optional.of(Direction.N));
-        player1South.put(PlayerID.PLAYER_4, Optional.of(Direction.N));
+        player34North.put(PlayerID.PLAYER_3, Optional.of(Direction.N));
+        player34North.put(PlayerID.PLAYER_4, Optional.of(Direction.N));
         Set<PlayerID> player34DropBomb = new HashSet<>();
-        player1DropsBomb.add(PlayerID.PLAYER_3);
-        player1DropsBomb.add(PlayerID.PLAYER_4);
+        player34DropBomb.add(PlayerID.PLAYER_3);
+        player34DropBomb.add(PlayerID.PLAYER_4);
 
-        GameState end = game.next(player34North, player34DropBomb);
-        assertEquals(2, next.bombedCells().size());
+        GameState end = next.next(player34North, player34DropBomb);
+        assertEquals(2, end.bombedCells().entrySet().size());
 
         // Let the bomb explode and add one to kill players 3 and 4
         for (int i = 0; i < Ticks.BOMB_FUSE_TICKS + 1; ++i)
             end = end.next(noMovement, noBombDrops);
-        assertEquals(players, next.players());
-        assertEquals(0, next.bombedCells().size());
+        assertEquals(0, end.bombedCells().size());
+        
 
         // let players 3 and 4 die
-        for (int i = 0; i < Ticks.PLAYER_DYING_TICKS; ++i)
-            next = next.next(noMovement, noBombDrops);
+        for (int i = 0; i < Ticks.PLAYER_DYING_TICKS + 1; ++i)
+            end = end.next(noMovement, noBombDrops);
 
-        assertEquals(1, next.alivePlayers().size());
-        assertEquals(true, next.isGameOver());
-        assertEquals(PlayerID.PLAYER_2, next.winner().get());
+        assertEquals(1, end.alivePlayers().size());
+        assertEquals(true, end.isGameOver());
+        assertEquals(PlayerID.PLAYER_2, end.winner().get());
 
     }
 }
