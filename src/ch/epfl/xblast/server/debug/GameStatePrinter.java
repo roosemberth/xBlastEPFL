@@ -13,6 +13,7 @@ import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 
 
+@SuppressWarnings("unused")
 public final class GameStatePrinter {
 
     private static String cyanWhite = "\u001b[1;37;46m";
@@ -71,7 +72,6 @@ public final class GameStatePrinter {
             }
             System.out.println();
         }
-        Iterator it = bombs.entrySet().iterator();
        
         System.out.println("Remaining ticks : " + String.format("%3.4f", s.remainingTime()));
         for(Player p : ps)
