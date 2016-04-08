@@ -67,7 +67,7 @@ public final class GameState {
     /**
      * Construct a Beginning-of-times Game state
      * @param board		Game Board
-     * @param players	Game Pkayers
+     * @param players	Game Players
      */
     public GameState(Board board, List<Player> players){
         this(0, board, players, new ArrayList<Bomb>(),new ArrayList<Sq<Sq<Cell>>>(), new ArrayList <Sq<Cell>>());
@@ -144,7 +144,7 @@ public final class GameState {
                 this.entrySet().stream().forEach(entry -> {
                     System.out.println(entry.getValue().ownerId()+"@"+entry.getKey());
                 });
-                return null;
+                return "";
             }
         };
         for(Bomb b : bombs){
@@ -204,26 +204,24 @@ public final class GameState {
         //3. Evolution of the explosions
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);   
         //4. Evolution of existing bombs
-        List<Bomb> newlyDropped = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
-
+        List<Bomb> bombs0 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
+        bombs0.addAll(bombs);
+        
         List<Bomb> bombs1 = new ArrayList<>();
                  
-        for(Bomb b : bombs){
+        for(Bomb b : bombs0){
             if(b.fuseLengths().tail().isEmpty() || blastedCells().contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
-        for(Bomb b : newlyDropped){
-            bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
-        }
         
         Set<Cell> bombedCells1 = new HashSet<>();
+        
         for(Bomb b : bombs1){
             bombedCells1.add(b.position());
         }
-        
         //5. Evolution of players
         List<Player> newPlayers = nextPlayers(players, playerBonuses, bombedCells1, board1, blastedCells1, speedChangeEvents);
        
@@ -349,9 +347,7 @@ public final class GameState {
         if(speedChangeEvents.containsKey(p.id())){
             speedChange = speedChangeEvents.get(p.id()).orElse(null);
             if(speedChange != null){
-                System.out.println(p.id() + "Changing direction " + speedChange);
                 if(!speedChange.isParallelTo(p.direction())){
-                    System.out.println("Not parallel... next central is " + centralPos.position());
                     return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
                             concat(Player.DirectedPosition.moving(new DirectedPosition( centralPos.position(), speedChange)));
                 }
@@ -360,7 +356,6 @@ public final class GameState {
                 }
             }
             else{
-                System.out.println(p.id() +  " stopping...");
                 return p.directedPositions().takeWhile(c -> !c.position().isCentral()).
                         concat(Player.DirectedPosition.stopped(centralPos));
             }
@@ -440,7 +435,6 @@ public final class GameState {
         return newList;
     }
     
-    //Check if needs to check player alive or list already has players alive
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
         List<Bomb> newBombs = new ArrayList<>();
         
@@ -453,12 +447,13 @@ public final class GameState {
                 for(Bomb b : bombs0){
                     if(b.ownerId() == p.id())
                         numBombs++;
-                    // Why we can't drop a bomb in the current cell?
                     if(b.position().equals(p.position()))
                         occupied = true;
                 }
-                if(p.maxBombs() > numBombs && !occupied && p.isAlive())
+                if(p.maxBombs() > numBombs && !occupied && p.isAlive()){
+                    System.out.println("Got new bomb for " + p.id() + " " + p.position().containingCell());
                     newBombs.add(p.newBomb());
+                }
             }
         }
         

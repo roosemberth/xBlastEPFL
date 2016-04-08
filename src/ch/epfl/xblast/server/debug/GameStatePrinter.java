@@ -38,9 +38,9 @@ public final class GameStatePrinter {
         
         for (int y = 0; y < Cell.ROWS; ++y) {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
-                Cell c = new Cell(x, y);
-                //check if c has a bomb, if so draw different color
-                for (Player p: ps) {
+               Cell c = new Cell(x, y);
+               //check if c has a bomb, if so draw different color
+               for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
                         String color = tealBlack;
                         switch (p.lifeState().state()){
@@ -71,7 +71,6 @@ public final class GameStatePrinter {
             }
             System.out.println();
         }
-        Iterator it = bombs.entrySet().iterator();
        
         System.out.println("Remaining ticks : " + String.format("%3.4f", s.remainingTime()));
         for(Player p : ps)
@@ -80,7 +79,7 @@ public final class GameStatePrinter {
                     + p.position() + " : " + p.position().containingCell()
             );
         
-        if(bombs.size() == 2)
+        if(bombs.size() >= 1)
             System.out.println(bombs);
     }
 

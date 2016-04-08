@@ -21,7 +21,7 @@ import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class Test {
     static boolean autoSimulate = true;
-    private static int frequency = 5;
+    private static int frequency = 10;
 
     public static void main(String[] args) throws InterruptedException {
         if (args.length > 0){
@@ -98,8 +98,9 @@ public class Test {
                     }
                     if (!autoSimulate)
                         continue;
-                    GameStatePrinter.printGameState(gs);
+                    
                     gs = gs.next(rand.randomSpeedChangeEvents(),rand.randomBombDropEvents());
+                    GameStatePrinter.printGameState(gs);
                 }
                 GameStatePrinter.printGameState(gs);
             }
