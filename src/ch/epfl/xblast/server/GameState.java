@@ -207,10 +207,12 @@ public final class GameState {
 
         List<Bomb> bombs0 = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
         bombs0.addAll(bombs);
+
         
         List<Bomb> bombs1 = new ArrayList<>();
+        
         for(Bomb b : bombs0){
-            if(b.fuseLengths().tail().isEmpty() || blastedCells().contains(b.position()))
+            if(b.fuseLengths().tail().isEmpty() || blastedCells1.contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
