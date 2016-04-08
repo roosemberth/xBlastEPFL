@@ -173,6 +173,9 @@ public final class GameState {
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
         List<Player> orderedPlayers = new ArrayList<>(4);
+        List<Bomb> bombs0 = new ArrayList<>();
+        
+        bombs0.addAll(bombs);
         
         for(PlayerID id : playerPermutations.get(indexPermutation)){
             orderedPlayers.add(listToHash(players).get(id));
@@ -204,21 +207,19 @@ public final class GameState {
         //3. Evolution of the explosions
         List<Sq<Sq<Cell>>>  explosions1 = nextExplosions(explosions);   
         //4. Evolution of existing bombs
-        List<Bomb> newlyDropped = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs);
+        List<Bomb> newlyDropped = newlyDroppedBombs(orderedPlayers, bombDropEvents, bombs0);
+        for(Bomb b : newlyDropped){
+            bombs0.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths(),b.range()));
+        }
 
         List<Bomb> bombs1 = new ArrayList<>();
-                 
-        for(Bomb b : bombs){
+        for(Bomb b : bombs0){
             if(b.fuseLengths().tail().isEmpty() || blastedCells().contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
-        for(Bomb b : newlyDropped){
-            bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
-        }
-        
         Set<Cell> bombedCells1 = new HashSet<>();
         for(Bomb b : bombs1){
             bombedCells1.add(b.position());
@@ -291,8 +292,7 @@ public final class GameState {
             Set<Cell> bombedCells1,
             Board board1,
             Set<Cell> blastedCells1,
-            Map<PlayerID,
-            Optional<Direction>> speedChangeEvents
+            Map<PlayerID, Optional<Direction>> speedChangeEvents
             ){
 
         List<Player> players1 = new ArrayList<>();
@@ -378,7 +378,6 @@ public final class GameState {
      * @return                 future positions
      */
     private static Sq<DirectedPosition> nextSqCollision(Sq<DirectedPosition> movingPath, Set<Cell> bombedCells1, Board board1, Set<Cell> blastedCells1){
-
         if(movingPath.head().position().isCentral()){
             if(board1.blockAt(movingPath.head().position().containingCell().
                     neighbor(movingPath.head().direction())).canHostPlayer()){
