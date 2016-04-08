@@ -15,6 +15,27 @@ public final class Player {
     private final Sq<DirectedPosition> directedPos;
     private final int maxBombs, bombRange;
     
+    @Override public boolean equals(Object obj) {
+        if (!(obj instanceof Player))
+            return false;
+        Player p = (Player) obj;
+        if (!id.equals(p.id))
+            return false;
+        if (!lifeStates.equals(p.lifeStates))
+            return false;
+        if (!directedPos.equals(p.directedPos))
+            return false;
+        if (maxBombs != p.maxBombs)
+            return false;
+        if (bombRange != p.bombRange)
+            return false;
+        return true;
+    };
+    
+    @Override public int hashCode() {
+        return 7*id.ordinal()+11*lifeStates.hashCode()+13*directedPos.hashCode()+17*maxBombs+19*bombRange;
+    }
+    
     /**
      * Construct player
      * @param Player ID
