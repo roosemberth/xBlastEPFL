@@ -35,6 +35,7 @@ public final class Lists {
     public static <T> List<List<T>> permutations(List<T> l){
         List<List<T>> list = new ArrayList<>();
         if(l.size() == 0){
+            list.add(new ArrayList<>());
             return Collections.unmodifiableList(list);
         }
         else if(l.size() < 2){
