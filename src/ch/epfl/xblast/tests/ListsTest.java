@@ -10,36 +10,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 
 public class ListsTest {
-	@Test 
-	public void permutationTests() {
-		List<ListTestClass> testList = new ArrayList<>();
 
-		assertEquals(testList, new ArrayList<ListTestClass>());
-		assertEquals(0, Lists.permutations(testList).size());
-		
-		ListTestClass l1 = new ListTestClass("l1");
-		ListTestClass l2 = new ListTestClass("l2");
-		ListTestClass l3 = new ListTestClass("l3");
-		
-		testList.add(l1);
-		testList.add(l2);
-		testList.add(l3);
-		
-		List<List<ListTestClass>> perrmControlList = new ArrayList<>(6);
-		perrmControlList.add(Arrays.asList(l1,l2,l3));
-		perrmControlList.add(Arrays.asList(l1,l3,l2));
-		perrmControlList.add(Arrays.asList(l2,l1,l3));
-		perrmControlList.add(Arrays.asList(l2,l3,l1));
-		perrmControlList.add(Arrays.asList(l3,l2,l1));
-		perrmControlList.add(Arrays.asList(l3,l1,l2));
-		
-		List<List<ListTestClass>> permList = Lists.permutations(testList);
-		
-		assertEquals(perrmControlList.size(),permList.size());
-		assertEquals(true, containSameElements(perrmControlList, permList, (sl1, sl2)->{
-			return containSameElements(sl1, sl2, (elem1, elem2)->elem1.equals(elem2));
-		}));
-	}
 	
 	private <T> boolean containSameElements(List<T> l1, List<T> l2, BiPredicate<T, T> equalityComparator){
 		if (l1.size()!=l2.size()) return false;

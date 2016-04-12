@@ -36,7 +36,6 @@ public final class GameStatePrinter {
         Set<Cell> blastedCells = s.blastedCells();
         
         System.out.println(clear);
-        
         for (int y = 0; y < Cell.ROWS; ++y) {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                Cell c = new Cell(x, y);
@@ -75,7 +74,7 @@ public final class GameStatePrinter {
             System.out.println();
         }
        
-        System.out.println("Remaining ticks : " + String.format("%3.4f", s.remainingTime()));
+        System.out.println("Remaining seconds : " + String.format("%3.4f", s.remainingTime()) + " " + " at tick: " + s.ticks());
         for(Player p : ps)
             System.out.println(""
                     + p.id() + " (" + p.lives() + "," + p.lifeState().state() + "): " 

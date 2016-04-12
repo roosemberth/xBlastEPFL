@@ -105,7 +105,10 @@ public final class Player {
      */
     public Sq<LifeState> statesForNextLife(){
         Sq <LifeState> l = Sq.repeat(Ticks.PLAYER_DYING_TICKS, new LifeState(lives(),LifeState.State.DYING));
-        if(lifeState().lives() <= 1){
+        if(lifeState().state() == LifeState.State.DYING || lifeState().state() == LifeState.State.DEAD){
+            return lifeStates().tail();
+        }
+        else if(lifeState().lives() <= 1){
             return l.concat(Sq.constant(new LifeState(lives()-1,LifeState.State.DEAD)));
         }
         else{
