@@ -19,6 +19,7 @@ public final class Bomb {
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range){
         this.ownerId = Objects.requireNonNull(ownerId);
         this.position = Objects.requireNonNull(position);
+        if(fuseLengths.isEmpty()) throw new IllegalArgumentException();
         this.fuseLengths = Objects.requireNonNull(fuseLengths);
         this.range = ArgumentChecker.requireNonNegative(range);
     }
