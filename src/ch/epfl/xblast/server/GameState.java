@@ -241,9 +241,7 @@ public final class GameState {
                 nextBlasts.add(t);
         }
         for(Sq<Sq<Cell>> explosion : explosions0){
-            if(explosion.tail().isEmpty())
-            	continue;
-            Sq<Cell> b = explosion.tail().head();
+            Sq<Cell> b = explosion.head();
              nextBlasts.add(b);
         }
         return nextBlasts;
