@@ -12,7 +12,7 @@ public enum Bonus {
     	@Override public Player applyTo(Player player){
         	// Prevent an "invalid" player status to keep growing 
             if(player.bombRange() < MAX_RANGE)
-                return player.withBombRange(player.bombRange()+1);
+                return player.withMaxBombs(player.maxBombs()+1);
             return player;
         }
     },
@@ -24,7 +24,7 @@ public enum Bonus {
         @Override public Player applyTo(Player player){
         	// Prevent an "invalid" player status to keep growing 
             if(player.maxBombs() < MAX_BOMBS)
-                return player.withMaxBombs(player.maxBombs()+1);
+                return player.withBombRange(player.bombRange()+1);
             return player;
         }
     };
