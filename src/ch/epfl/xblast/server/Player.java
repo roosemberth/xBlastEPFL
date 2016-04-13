@@ -65,10 +65,13 @@ public final class Player {
 	}
 	
 	private static Sq<LifeState> getNewLife(int lives){
-		return Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, 
+	    if(lives != 0)
+	        return Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, 
 					new LifeState(lives, LifeState.State.INVULNERABLE))
 				.concat(Sq.constant(
 					new LifeState(lives, LifeState.State.VULNERABLE)));
+	    else
+	        return Sq.constant(new LifeState(0,LifeState.State.DEAD));
 	}
 	
 	private static Sq<DirectedPosition> getStoppedPosition(Cell position){

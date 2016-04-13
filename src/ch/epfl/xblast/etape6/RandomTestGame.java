@@ -1,7 +1,5 @@
 package ch.epfl.xblast.etape6;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -22,6 +20,8 @@ import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Checks that the player move as in the example for the random game provided as example

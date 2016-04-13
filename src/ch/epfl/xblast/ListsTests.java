@@ -1,5 +1,6 @@
 package ch.epfl.xblast;
 
+import ch.epfl.xblast.Lists;
 import org.junit.Test;
 
 import java.util.*;

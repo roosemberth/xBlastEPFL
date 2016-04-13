@@ -1,6 +1,8 @@
 package ch.epfl.xblast;
 
 import ch.epfl.cs108.Sq;
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import org.junit.Test;

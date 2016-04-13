@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
@@ -157,7 +158,7 @@ public final class GameState {
      * @return 	A set containing currently Blasted cells
      */
     public Set<Cell> blastedCells(){
-        Set<Cell> blastedCells = new HashSet<>(blasts.size());
+        Set<Cell> blastedCells = new HashSet<Cell>(blasts.size());
         for(Sq<Cell> c : blasts){
             blastedCells.add(c.head());
         }
@@ -241,9 +242,7 @@ public final class GameState {
                 nextBlasts.add(t);
         }
         for(Sq<Sq<Cell>> explosion : explosions0){
-            if(explosion.tail().isEmpty())
-            	continue;
-            Sq<Cell> b = explosion.tail().head();
+            Sq<Cell> b = explosion.head();
              nextBlasts.add(b);
         }
         return nextBlasts;
@@ -365,7 +364,7 @@ public final class GameState {
     }
     
     /**
-     * 
+     * Gives the next Sq<DirectedPosition> for the players, checking collisions etc
      * @param movingPath       current and future positions
      * @param bombedCells1
      * @param board1

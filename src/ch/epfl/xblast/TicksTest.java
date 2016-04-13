@@ -1,5 +1,6 @@
 package ch.epfl.xblast;
 
+import ch.epfl.xblast.Time;
 import org.junit.Test;
 
 import static ch.epfl.xblast.server.Ticks.*;

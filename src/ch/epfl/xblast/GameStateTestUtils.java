@@ -20,8 +20,6 @@ import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
-import ch.epfl.xblast.server.Player.DirectedPosition;
-import ch.epfl.xblast.server.Player.LifeState;
 
 public class GameStateTestUtils {
 
