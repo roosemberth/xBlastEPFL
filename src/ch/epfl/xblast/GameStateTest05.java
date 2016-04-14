@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -527,11 +526,6 @@ public class GameStateTest05 {
                 cells.addAll(entry.getValue().head());
                 neigbors.put(entry.getKey(), entry.getValue().tail());
             }
-            System.out.println(cells);
-            System.out.println(gameState.blastedCells());
-            Set<Cell> l = new HashSet<>(cells);
-            l.removeAll(gameState.blastedCells());
-            System.out.println(l);
             assertEquals(cells, gameState.blastedCells());
         }
 
