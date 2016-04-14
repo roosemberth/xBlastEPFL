@@ -1,5 +1,7 @@
 package ch.epfl.xblast.etape6;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -7,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -16,12 +19,11 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
+import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;
 import ch.epfl.xblast.server.Player;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Checks that the player move as in the example for the random game provided as example
@@ -64,18 +66,31 @@ public class RandomTestGame {
     	
         RandomEventGenerator randEvents = new RandomEventGenerator(2016, 30, 100);
         GameState s = new GameState(createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW));
+        
+
         while (!s.isGameOver()) {
             s = s.next(randEvents.randomSpeedChangeEvents(), randEvents.randomBombDropEvents());
 
+            Map<Cell,Bomb> m = s.bombedCells();
+            
+      
             for(Player p: s.players()) {
                 List<List<Integer>> pos = GameSimulation.positionsList(pos_iterator.next());
                 Sq<DirectedPosition> seq = p.directedPositions();
-
+                int i = 0;   
+                
                 for(List<Integer> e: pos) {
                 	DirectedPosition h = seq.head();
+                	System.out.println("POSITIONS at iteration " + i);
+                	System.out.println(h.position() + " " + h.direction());
+                	System.out.println(e);
+                    System.out.println("NEXT POSITIONS");
+                    System.out.println(seq.tail().head().position() + " " + seq.tail().head().direction());
                 	assertTrue(GameSimulation.compare(h, e));
 
-                	seq = seq.tail();                	
+                	seq = seq.tail();    
+
+                    i++;
                 }
             }
         }

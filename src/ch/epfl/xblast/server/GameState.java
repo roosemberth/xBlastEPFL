@@ -296,7 +296,7 @@ public final class GameState {
         
         //Update players
         for(Player p : players0){
-            Player newP = null;
+            Player newP;
             
             Sq<DirectedPosition> newDPos = p.directedPositions();
             Sq<LifeState> newLifestate = null;
@@ -304,25 +304,27 @@ public final class GameState {
             final int maxBombs1 = p.maxBombs();
             final int maxRange1 = p.bombRange();
 
+
+            // Change his current path sequence
+            newDPos = nextSqDPos(p, speedChangeEvents);
             //Check changeEvents
             if(p.lifeState().canMove()){
-                // Change his current path sequence
-                newDPos = nextSqDPos(p, speedChangeEvents);
                 // Get his future path (checking if he Can take that path.
                 newDPos = nextSqCollision(newDPos,bombedCells1,board1,blastedCells1);
-                // Get his next state wrt explosions going on
-                newLifestate = nextSqLifestate(p, newDPos,blastedCells1);
+                
+            }
 
-                // Create new player entity for the next state
-                newP = new Player(p.id(), newLifestate ,newDPos,maxBombs1, maxRange1);
-                //Check bonuses
-                if(playerBonuses.containsKey(p.id())){
-                    newP = playerBonuses.get(p.id()).applyTo(newP);
-                }
+            // Get his next state wrt explosions going on
+            newLifestate = nextSqLifestate(p, newDPos,blastedCells1);
+
+            // Create new player entity for the next state
+            newP = new Player(p.id(), newLifestate ,newDPos,maxBombs1, maxRange1);
+
+            //Check bonuses
+            if(playerBonuses.containsKey(p.id())){
+                newP = playerBonuses.get(p.id()).applyTo(newP);
             }
-            else{
-                newP = new Player(p.id(),p.lifeStates().tail(),p.directedPositions(),p.maxBombs(),p.bombRange());
-            }
+            
             players1.add(newP);
         }
         
