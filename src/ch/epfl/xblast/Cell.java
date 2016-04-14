@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * @author pedro
- *
+ *  Represents a Game Board Cell
  */
 public final class Cell {
     public static final int COLUMNS = 15;
@@ -72,47 +71,6 @@ public final class Cell {
             horizontal = !horizontal;
         }
         
-        //Ma version
-        /*
-        int x = 0, y = 0;
-        int minRow = 1, minCol = 0, maxRow = ROWS-1, maxCol = COLUMNS-1;
-        
-        int horizontalDirection = 1, verticalDirection = 1;
-
-        for(int i = 0; i < ROWS; i++){
-            while(x <= maxCol && x >= minCol) {
-                spiralOrder.add(new Cell(x,y));
-                x += horizontalDirection;
-            }
-
-            x -= horizontalDirection;
-            y += verticalDirection;
-            
-            while(y <= maxRow && y >= minRow){
-                spiralOrder.add(new Cell(x,y));
-                y += verticalDirection;
-            }
-            
-
-            y -= verticalDirection;
-            x -= horizontalDirection;
-            
-            if(horizontalDirection > 0){
-                maxCol--;
-            }
-            else{
-                minCol++;
-            }
-            horizontalDirection *= -1;
-            if(verticalDirection > 0){
-                maxRow--;
-            }
-            else{
-                minRow++;
-            }
-            verticalDirection *= -1;
-
-        }*/
         return spiral;
     }
     

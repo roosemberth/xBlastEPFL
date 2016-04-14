@@ -2,6 +2,9 @@ package ch.epfl.xblast.server;
 
 import ch.epfl.xblast.Time;
 
+/**
+ *  Game Time-Related Constants
+ */
 public interface Ticks {
     public static int PLAYER_DYING_TICKS = 8;
     public static int PLAYER_INVULNERABLE_TICKS = 64;

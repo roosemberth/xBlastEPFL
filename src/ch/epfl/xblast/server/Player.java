@@ -15,6 +15,9 @@ public final class Player {
     private final Sq<DirectedPosition> directedPos;
     private final int maxBombs, bombRange;
     
+    /**
+     * Returns true if two objects are internally equal
+     */
     @Override public boolean equals(Object obj) {
         if (!(obj instanceof Player))
             return false;
@@ -32,6 +35,9 @@ public final class Player {
         return true;
     };
     
+    /**
+     * Returns a hash of the Object
+     */
     @Override public int hashCode() {
         return 7*id.ordinal()+11*lifeStates.hashCode()+13*directedPos.hashCode()+17*maxBombs+19*bombRange;
     }
@@ -74,12 +80,16 @@ public final class Player {
 	        return Sq.constant(new LifeState(0,LifeState.State.DEAD));
 	}
 	
+	/**
+	 * @param  target position
+	 * @return Stopped Directed Position Sequence on a given Cell
+	 */
 	private static Sq<DirectedPosition> getStoppedPosition(Cell position){
 		return DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S));
 	}
     
 	/**
-	 * @return Player
+	 * @return Player id
 	 */
     public PlayerID id(){
         return id;

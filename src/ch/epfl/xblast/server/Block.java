@@ -2,6 +2,10 @@ package ch.epfl.xblast.server;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Represents GameBoard Block
+ *
+ */
 public enum Block {
     FREE,
     INDESTRUCTIBLE_WALL,

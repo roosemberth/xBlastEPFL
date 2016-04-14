@@ -234,6 +234,13 @@ public final class GameState {
         return new GameState(ticks+1,board1,newPlayers, bombs1, explosions1, blasts1);
     }
     
+    /**
+     * Calculates the next sequence of blasts
+     * @param Current Blasts
+     * @param Current Board
+     * @param List of a Sequence of Explossions
+     * @return  Next List of Explossions
+     */
     private static List<Sq<Cell>> nextBlasts(List<Sq<Cell>> blasts0, Board board0, List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Cell>> nextBlasts = new ArrayList<>();
         for(Sq<Cell> blast : blasts0){
@@ -248,6 +255,13 @@ public final class GameState {
         return nextBlasts;
     }
     
+    /**
+     * Calculates the next Game Board
+     * @param board0
+     * @param consumedBonuses
+     * @param blastedCells1
+     * @return
+     */
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses, Set<Cell> blastedCells1){
         List<Sq<Block>> newBlocks = new ArrayList<>(); 
         for(int y = 0; y < Cell.ROWS; y++){
@@ -426,6 +440,11 @@ public final class GameState {
         return p.lifeStates().tail();
     }
 
+    /**
+     * Calculates next list of Explosions
+     * @param  Current Explosions
+     * @return List of Explosions of the next state
+     */
     private static List<Sq<Sq<Cell>>> nextExplosions(List<Sq<Sq<Cell>>> explosions0){
         List<Sq<Sq<Cell>>> newList = new ArrayList<>();
         for(Sq<Sq<Cell>> c : explosions0){
@@ -435,6 +454,13 @@ public final class GameState {
         return newList;
     }
     
+    /**
+     * Calculates the new bombs based on the current players, bombs and bomb drop events
+     * @param players0
+     * @param bombDropEvents
+     * @param bombs0
+     * @return Lis of bombs of the next state
+     */
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
         List<Bomb> newBombs = new ArrayList<>();
         

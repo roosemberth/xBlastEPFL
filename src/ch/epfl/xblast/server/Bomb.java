@@ -16,6 +16,13 @@ public final class Bomb {
     private final Sq<Integer> fuseLengths;
     private final int range;
     
+    /**
+     * Creates an inmutable bomb from a sequence
+     * @param Owner playerID
+     * @param position
+     * @param fuseLengths
+     * @param range
+     */
     public Bomb(PlayerID ownerId, Cell position, Sq<Integer> fuseLengths, int range){
         this.ownerId = Objects.requireNonNull(ownerId);
         this.position = Objects.requireNonNull(position);
@@ -24,6 +31,13 @@ public final class Bomb {
         this.range = ArgumentChecker.requireNonNegative(range);
     }
     
+    /**
+     * Creates an inmutable bomb from a fuselength
+     * @param ownerId
+     * @param position
+     * @param fuseLength
+     * @param range
+     */
     public Bomb(PlayerID ownerId, Cell position, int fuseLength, int range){
         this(ownerId, position, Sq.iterate(fuseLength, s->s-1).limit(fuseLength), range);
     }
@@ -49,6 +63,9 @@ public final class Bomb {
         return range;
     }
     
+    /**
+     * @return list of explossion cells
+     */
     public List<Sq<Sq<Cell>>> explosion(){
         List<Sq<Sq<Cell>>> l = new ArrayList<>();
         for(Direction d : Direction.values()){

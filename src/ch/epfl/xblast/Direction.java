@@ -1,5 +1,8 @@
 package ch.epfl.xblast;
 
+/**
+ *  Represents a player chosen direction
+ */
 public enum Direction {
     N,
     E,

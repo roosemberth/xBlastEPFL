@@ -1,7 +1,9 @@
 package ch.epfl.xblast;
 
+/**
+ * Represents a subcell of the game. Each subcell corresponds to a movement (and therefore minimal distance) unit on the game.
+ */
 public final class SubCell {
-    
     public static final int COLUMNS = 16;
     public static final int ROWS = 16;
     public static final int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
@@ -9,15 +11,27 @@ public final class SubCell {
     
     private final int x, y;
     
+    /**
+     * Creates a subcell at a given position
+     * @param x
+     * @param y
+     */
     public SubCell(int x, int y){
         this.x = Math.floorMod(x, BOARD_WIDTH);
         this.y = Math.floorMod(y, BOARD_HEIGHT);
     }
     
+    /**
+     * @param cell
+     * @return the central subcell corresponding to the specified cell
+     */
     public static SubCell centralSubCellOf(Cell cell){
         return new SubCell(cell.x()*COLUMNS+COLUMNS/2, cell.y()*ROWS+ROWS/2);
     }  
     
+    /**
+     * @return the Manhathan distance to the central subcell
+     */
     public int distanceToCentral(){
         return Math.abs((x%COLUMNS)-(COLUMNS/2)) + Math.abs((y%COLUMNS)-(ROWS/2));
     }
@@ -28,6 +42,9 @@ public final class SubCell {
     public int y(){
         return y;
     }
+    /**
+     * @return is this subcell is central
+     */
     public boolean isCentral(){
         if((x%COLUMNS) == (COLUMNS/2) && (y%COLUMNS) == (COLUMNS/2)){
             return true;
@@ -50,6 +67,9 @@ public final class SubCell {
         }
     }
     
+    /**
+     * @return the cell to which this subcell bellongs to
+     */
     public Cell containingCell(){
         return new Cell(x/COLUMNS,(y/ROWS));
     }
