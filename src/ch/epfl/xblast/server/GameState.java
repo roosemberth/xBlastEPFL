@@ -216,7 +216,6 @@ public final class GameState {
             if(b.fuseLengths().tail().isEmpty() || blastedCells1.contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
-                System.out.println("Bomb from player " + b.ownerId() +" with"+ b.fuseLength() +"to " + b.fuseLengths().tail().head());
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
@@ -448,7 +447,7 @@ public final class GameState {
                 for(Bomb b : bombs0){
                     if(b.ownerId() == p.id())
                         numBombs++;
-                    if(b.position().equals(p.position()))
+                    if(b.position().equals(p.position().containingCell()))
                         occupied = true;
                 }
                 if(p.maxBombs() > numBombs && !occupied && p.isAlive()){

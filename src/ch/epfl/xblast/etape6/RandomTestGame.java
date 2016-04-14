@@ -78,13 +78,6 @@ public class RandomTestGame {
                 
                 for(List<Integer> e: pos) {
                 	DirectedPosition h = seq.head();
-                	System.out.println("BOMBS");
-                	System.out.println(s.bombedCells());
-                	System.out.println("POSITIONS at step " + i + " after " + j + " next");
-                	System.out.println(h.position() + " " + h.direction());
-                	System.out.println(e);
-                    System.out.println("NEXT POSITIONS");
-                    System.out.println(seq.tail().head().position() + " " + seq.tail().head().direction());
                 	assertTrue(GameSimulation.compare(h, e));
 
                 	seq = seq.tail();    
