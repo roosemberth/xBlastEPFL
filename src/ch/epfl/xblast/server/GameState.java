@@ -143,7 +143,7 @@ public final class GameState {
             private static final long serialVersionUID = 2821855353073180883L;
             @Override public String toString(){
                 this.entrySet().stream().forEach(entry -> {
-                    System.out.println(entry.getValue().ownerId()+"@"+entry.getKey());
+                    System.out.println(entry.getValue().ownerId()+"@"+entry.getKey()+" - " + entry.getValue().fuseLength());
                 });
                 return "";
             }
@@ -216,6 +216,7 @@ public final class GameState {
             if(b.fuseLengths().tail().isEmpty() || blastedCells1.contains(b.position()))
                 explosions1.addAll(b.explosion());
             else{
+                System.out.println("Bomb from player " + b.ownerId() +" with"+ b.fuseLength() +"to " + b.fuseLengths().tail().head());
                 bombs1.add(new Bomb(b.ownerId(),b.position(),b.fuseLengths().tail(),b.range()));
             }
         }
@@ -298,7 +299,7 @@ public final class GameState {
         for(Player p : players0){
             Player newP;
             
-            Sq<DirectedPosition> newDPos = p.directedPositions();
+            Sq<DirectedPosition> newDPos =null;
             Sq<LifeState> newLifestate = null;
 
             final int maxBombs1 = p.maxBombs();

@@ -67,12 +67,9 @@ public class RandomTestGame {
         RandomEventGenerator randEvents = new RandomEventGenerator(2016, 30, 100);
         GameState s = new GameState(createBoard(), createPlayers(3, 2, 3, POS_NW, POS_NE, POS_SE, POS_SW));
         
-
+        int j = 0;
         while (!s.isGameOver()) {
             s = s.next(randEvents.randomSpeedChangeEvents(), randEvents.randomBombDropEvents());
-
-            Map<Cell,Bomb> m = s.bombedCells();
-            
       
             for(Player p: s.players()) {
                 List<List<Integer>> pos = GameSimulation.positionsList(pos_iterator.next());
@@ -81,7 +78,9 @@ public class RandomTestGame {
                 
                 for(List<Integer> e: pos) {
                 	DirectedPosition h = seq.head();
-                	System.out.println("POSITIONS at iteration " + i);
+                	System.out.println("BOMBS");
+                	System.out.println(s.bombedCells());
+                	System.out.println("POSITIONS at step " + i + " after " + j + " next");
                 	System.out.println(h.position() + " " + h.direction());
                 	System.out.println(e);
                     System.out.println("NEXT POSITIONS");
@@ -93,6 +92,7 @@ public class RandomTestGame {
                     i++;
                 }
             }
+            j++;
         }
         player_positions.close();
     }
