@@ -41,6 +41,8 @@ public final class GameState {
     
     private static final Block[] transformBlocks = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
     
+    //Disntance at which the player is blocked
+    private static final int BLOCK_DISTANCE = 6;
     /**
      * Constructs a new Game state given Specified Conditions
      * @param ticks			Game elapsed ticks
@@ -59,10 +61,10 @@ public final class GameState {
 
         this.ticks = ticks;
         this.board = Objects.requireNonNull(board);
-        this.players = Collections.unmodifiableList(new ArrayList<Player>(players));
-        this.bombs = Collections.unmodifiableList(new ArrayList<Bomb>(bombs));
-        this.explosions = Collections.unmodifiableList(new ArrayList<Sq<Sq<Cell>>>(explosions));
-        this.blasts = Collections.unmodifiableList(new ArrayList<Sq<Cell>>(blasts));
+        this.players = Collections.unmodifiableList(new ArrayList<Player>(Objects.requireNonNull(players)));
+        this.bombs = Collections.unmodifiableList(new ArrayList<Bomb>(Objects.requireNonNull(bombs)));
+        this.explosions = Collections.unmodifiableList(new ArrayList<Sq<Sq<Cell>>>(Objects.requireNonNull(explosions)));
+        this.blasts = Collections.unmodifiableList(new ArrayList<Sq<Cell>>(Objects.requireNonNull(blasts)));
     }
     
     /**
@@ -398,7 +400,7 @@ public final class GameState {
             if(bombedCells1.contains(movingPath.head().position().containingCell())){
                 //Collision with bombs
                 final int distanceToCentral = movingPath.head().position().distanceToCentral();
-                if(distanceToCentral == 6){
+                if(distanceToCentral ==  BLOCK_DISTANCE){
                     //Is he heading away from center?
                     if(distanceToCentral < movingPath.tail().head().position().distanceToCentral() ){
                         // it's okay to continue

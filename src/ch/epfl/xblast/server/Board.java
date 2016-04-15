@@ -23,7 +23,7 @@ public final class Board {
     public Board(List<Sq<Block>> blocks){
         if(blocks.size() != Cell.COUNT) 
             throw new IllegalArgumentException("Board passed has unvalid number of elements");
-        this.blocks = new ArrayList<>(blocks);
+        this.blocks = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(blocks)));
     }
     
     /**

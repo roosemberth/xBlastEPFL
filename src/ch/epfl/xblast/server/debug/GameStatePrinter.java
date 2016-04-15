@@ -40,7 +40,6 @@ public final class GameStatePrinter {
             xLoop: for (int x = 0; x < Cell.COLUMNS; ++x) {
                Cell c = new Cell(x, y);
                //check if c has a bomb, if so draw different color
-               if(false)
                for (Player p: ps) {
                     if (p.position().containingCell().equals(c)) {
                         String color = tealBlack;
