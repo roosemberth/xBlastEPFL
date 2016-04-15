@@ -193,7 +193,7 @@ public final class GameState {
         //check the bonus collisions
         for(Player p : orderedPlayers){
             Cell playerPos = p.position().containingCell();
-            if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos)){
+            if(board.blockAt(playerPos).isBonus() && !consumedBonuses.contains(playerPos) && p.position().isCentral()){
                 consumedBonuses.add(playerPos);
                 playerBonuses.put(p.id(), board.blockAt(playerPos).associatedBonus());
             }
