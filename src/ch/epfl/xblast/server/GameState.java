@@ -478,6 +478,11 @@ public final class GameState {
                     if(b.position().equals(p.position().containingCell()))
                         occupied = true;
                 }
+                //Check that another player didn't place a bomb at same place
+                for(Bomb b : newBombs){
+                    if(b.position().equals(p.position().containingCell()))
+                        occupied = true;
+                }
                 if(p.maxBombs() > numBombs && !occupied && p.isAlive()){
                     newBombs.add(p.newBomb());
                 }
