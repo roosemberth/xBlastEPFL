@@ -1,4 +1,4 @@
-package ch.epfl.xblast;
+package ch.epfl.xblast.etape6;
 
 import org.junit.Test;
 

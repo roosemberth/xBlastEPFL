@@ -1,8 +1,11 @@
-package ch.epfl.xblast;
+package ch.epfl.xblast.etape6;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.SubCell;
 
 public class SubCellTest05 {
 

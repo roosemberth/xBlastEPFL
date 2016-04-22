@@ -1,6 +1,9 @@
-package ch.epfl.xblast;
+package ch.epfl.xblast.etape6;
 
 import ch.epfl.cs108.Sq;
+import ch.epfl.xblast.Cell;
+import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.Time;
 import ch.epfl.xblast.server.*;
 import org.junit.Assert;
 import org.junit.Test;
