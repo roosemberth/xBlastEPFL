@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public final class Level {
 	
-	public final static SOMETHIGN DEFAULT_LEVEL //BOARD?
+	//public final static SOMETHIGN DEFAULT_LEVEL //BOARD?
 	private final BoardPainter bp;
 	private final GameState gs;
 	

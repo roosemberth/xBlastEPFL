@@ -7,7 +7,7 @@ import java.util.List;
 public final class RunLengthEncoder {
 	private RunLengthEncoder(){}
 	
-	public List<Byte> encode(List<Byte> plain){
+	public static List<Byte> encode(List<Byte> plain){
 		List<Byte> encoded = new ArrayList<>();
 		
 		Iterator<Byte> it = plain.iterator();
@@ -17,8 +17,10 @@ public final class RunLengthEncoder {
 			Byte curByte = it.next();
 			if(curByte < 0) throw new IllegalArgumentException("Can't encode negative numbers");
 			
-			if(numRepetitions != 0){
-				if(lastByte != curByte){
+			if(numRepetitions != 0 ){
+				if(lastByte != curByte || !it.hasNext()){
+					if(!it.hasNext()) 
+						numRepetitions++;
 					switch(numRepetitions){
 						case 2:
 							encoded.add(lastByte);
@@ -36,10 +38,25 @@ public final class RunLengthEncoder {
 			lastByte = curByte;
 			numRepetitions++;
 		}
+		
 		return encoded;
 	}
 	
-	/*public List<Byte> decode(List<Byte> encoded){
-		
-	}*/
+	public static List<Byte> decode(List<Byte> encoded){
+		List<Byte> decoded = new ArrayList<>();
+		Iterator<Byte> it = encoded.iterator();
+		while(it.hasNext()){
+			Byte curByte = it.next();
+			int numToAdd = 1;
+			//Check next element exists if negative or assume its correct?
+			if(curByte<0){
+				numToAdd = Math.abs(curByte)+2;
+				curByte = it.next();
+			}
+			for(int i = 0; i < numToAdd; i++){
+				decoded.add(curByte);
+			}
+		}
+		return decoded;
+	}
 }
