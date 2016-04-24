@@ -18,9 +18,7 @@ public final class RunLengthEncoder {
 			if(curByte < 0) throw new IllegalArgumentException("Can't encode negative numbers");
 			
 			if(numRepetitions != 0 ){
-				if(lastByte != curByte || !it.hasNext()){
-					if(!it.hasNext()) 
-						numRepetitions++;
+				if(lastByte != curByte){
 					switch(numRepetitions){
 						case 2:
 							encoded.add(lastByte);
@@ -38,7 +36,17 @@ public final class RunLengthEncoder {
 			lastByte = curByte;
 			numRepetitions++;
 		}
-		
+		switch(numRepetitions){
+			case 2:
+				encoded.add(lastByte);
+			case 1:
+				encoded.add(lastByte);
+				break;
+			default:
+				encoded.add((byte)(-(numRepetitions-2)));
+				encoded.add(lastByte);
+				break;
+		}
 		return encoded;
 	}
 	
