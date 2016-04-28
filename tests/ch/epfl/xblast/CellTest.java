@@ -1,13 +1,10 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import ch.epfl.xblast.Cell;
-import ch.epfl.xblast.Direction;
 
 public class CellTest {
     @Test

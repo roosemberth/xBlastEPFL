@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast;
 
 import static ch.epfl.xblast.server.Block.CRUMBLING_WALL;
 import static ch.epfl.xblast.server.Block.FREE;
@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import ch.epfl.cs108.Sq;
-import ch.epfl.xblast.Cell;
-import ch.epfl.xblast.Lists;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 

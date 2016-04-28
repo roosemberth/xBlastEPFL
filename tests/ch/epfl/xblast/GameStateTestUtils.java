@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 
 import ch.epfl.cs108.Sq;
-import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.Bomb;
 import ch.epfl.xblast.server.GameState;

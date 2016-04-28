@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,8 +13,6 @@ import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
-import ch.epfl.xblast.server.Bomb;
-import ch.epfl.xblast.server.Ticks;
 
 public class BombTest {
 	/*

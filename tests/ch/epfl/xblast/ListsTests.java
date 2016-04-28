@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast;
 
 import ch.epfl.xblast.Lists;
 import org.junit.Test;

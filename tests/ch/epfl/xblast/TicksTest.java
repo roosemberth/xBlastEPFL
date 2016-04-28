@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast;
 
 import ch.epfl.xblast.Time;
 import org.junit.Test;

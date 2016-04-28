@@ -1,4 +1,4 @@
-package ch.epfl.xblast.etape6;
+package ch.epfl.xblast.server;
 
 
 import static org.junit.Assert.assertEquals;
@@ -19,9 +19,6 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
-import ch.epfl.xblast.server.Bomb;
-import ch.epfl.xblast.server.Player;
-import ch.epfl.xblast.server.Ticks;
 import ch.epfl.xblast.server.Player.DirectedPosition;
 import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
