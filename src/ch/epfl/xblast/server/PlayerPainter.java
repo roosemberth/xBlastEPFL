@@ -2,18 +2,19 @@ package ch.epfl.xblast.server;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
+import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
 
 public final class PlayerPainter {
     private PlayerPainter(){}
     
-    static final int stepsId[] = {0,1,0,2};
-    
+    private static final int stepsId[] = {0,1,0,2};
+    private static final byte BYTE_FOR_DEAD = 15;
     public static byte byteForPlayer(int tick, Player p){ 
         //CHECK WHAT ELSE NEEDS TO BE ADDED
         LifeState ls = p.lifeState();
-        Cell c = p.position().containingCell();
+        SubCell c = p.position();
         
         int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 5 : p.id().ordinal());
         
@@ -26,15 +27,10 @@ public final class PlayerPainter {
             else{
                 steps = stepsId[c.y()%4];
             }
-            
-            if(ls.state().equals(State.INVULNERABLE)){
-                return (byte)(playerID + p.direction().ordinal() * 3 + steps);
-            }
-            else{
-                return (byte)(20*p.id().ordinal() + p.direction().ordinal() * 3 + steps);
-            }
+            return (byte)(playerID + p.direction().ordinal() * 3 + steps);
         }
-        else{
+        //here probably add if dying...
+        else if(ls.state() == State.DYING){
             if(ls.lives() > 0){
                 return (byte)(playerID + 12);
             }
@@ -42,5 +38,6 @@ public final class PlayerPainter {
                 return (byte)(playerID + 13);
             }
         }
+        return (byte)(playerID + BYTE_FOR_DEAD);
     }
 }

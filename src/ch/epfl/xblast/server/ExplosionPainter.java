@@ -2,7 +2,9 @@ package ch.epfl.xblast.server;
 
 public final class ExplosionPainter {
     private ExplosionPainter(){}    
-    private static byte BYTE_FOR_EMPTY = (byte)16;
+    
+    public final static byte BYTE_FOR_EMPTY = (byte)16;
+    
     public static byte byteForBomb(Bomb b){
         if(Integer.bitCount(b.fuseLength()) == 1){
             return (byte)1;

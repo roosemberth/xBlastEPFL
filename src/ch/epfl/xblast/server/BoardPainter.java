@@ -2,6 +2,7 @@ package ch.epfl.xblast.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
@@ -13,9 +14,9 @@ public final class BoardPainter {
     private final BlockImage blockShadowed;
  
 
-    private BoardPainter(Map<Block,BlockImage> blockPalette, BlockImage blockShadowed){
-        this.blockPalette = blockPalette;
-        this.blockShadowed = blockShadowed;
+    public BoardPainter(Map<Block,BlockImage> blockPalette, BlockImage blockShadowed){
+        this.blockPalette = Objects.requireNonNull(blockPalette);
+        this.blockShadowed = Objects.requireNonNull(blockShadowed);
     }
     
     public byte byteForCell(Board b, Cell c){  
@@ -36,12 +37,5 @@ public final class BoardPainter {
         return false;
     }
     
-    public static BoardPainter defaultBoardPainter(){
-    	Map<Block,BlockImage> blockPalette = new HashMap<>();
-    	for(Block b : Block.values()){
-    		blockPalette.put(b, BlockImage.values()[b.ordinal() > 0 ? b.ordinal()+1 : b.ordinal()]);
-    	}
-    	BlockImage blockShadowed = BlockImage.IRON_FLOOR_S;
-    	return new BoardPainter(blockPalette, blockShadowed);
-    }
+    
 }
