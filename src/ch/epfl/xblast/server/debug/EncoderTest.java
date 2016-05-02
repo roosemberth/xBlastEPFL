@@ -9,6 +9,7 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.RunLengthEncoder;
+import ch.epfl.xblast.client.GameStateDeserializer;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.BoardPainter;
@@ -40,13 +41,10 @@ public class EncoderTest {
 
 	                60).toString();
 	        System.out.println(s.equals(toCompare));
+	        System.out.println("TEST 1:");
+	        System.out.println(RunLengthEncoder.decode(RunLengthEncoder.encode(Arrays.asList((byte)3, (byte)3, (byte)3, (byte)3, (byte)3, (byte)2, (byte)1, (byte)2, (byte)2, (byte)2))));
 	        System.out.println(s);
 	        System.out.println(toCompare);
-	        List<Byte> testRepetitions = new ArrayList<>();
-	        for(int i = 0; i < 390; i++){
-	            testRepetitions.add((byte)0);
-	        }
-	        System.out.println(RunLengthEncoder.encode(testRepetitions));
 	}
 
 }

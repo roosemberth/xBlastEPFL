@@ -7,6 +7,7 @@ import java.util.List;
 
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
+import ch.epfl.xblast.client.XBlastComponent;
 import ch.epfl.xblast.server.Block;
 import ch.epfl.xblast.server.Board;
 import ch.epfl.xblast.server.GameState;
@@ -39,11 +40,9 @@ public class Main {
         players.add(new Player(PlayerID.PLAYER_2, 3, new Cell(13,1), 2, 3));
         players.add(new Player(PlayerID.PLAYER_3, 3, new Cell(13,11), 2, 3));
         players.add(new Player(PlayerID.PLAYER_4, 3, new Cell(1,11), 2, 3));
-        
+        XBlastComponent xc = new XBlastComponent();
         GameState gameState = new GameState(board, players);
         RandomEventGenerator reg = new RandomEventGenerator(2016,30,100);
-        GameStatePrinter.printGameState(gameState);
-        
         while(!gameState.isGameOver())
         {
             try {

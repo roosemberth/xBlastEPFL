@@ -8,27 +8,8 @@ public final class RunLengthEncoder {
 	private RunLengthEncoder(){}
 	
 	
-	private static void addToList(int nRepetitions, List<Byte> list, byte b){
-	    while(nRepetitions > 0){
-	        switch(nRepetitions){
-            case 2:
-                list.add(b);
-                nRepetitions--;
-            case 1:
-                list.add(b);
-                nRepetitions--;
-                break;
-            default:
-                if(nRepetitions <= 130)
-                    list.add((byte)(-((nRepetitions)-2)));
-                else
-                    list.add((byte)-128);
-                list.add(b);
-                nRepetitions -= 130;
-                break;
-	        }
-	    }
-	}
+	
+	
 	public static List<Byte> encode(List<Byte> plain){
 		List<Byte> encoded = new ArrayList<>();
 		
@@ -51,6 +32,28 @@ public final class RunLengthEncoder {
 		addToList(numRepetitions, encoded, lastByte);
 		return encoded;
 	}
+	
+	private static void addToList(int nRepetitions, List<Byte> list, byte b){
+        while(nRepetitions > 0){
+            switch(nRepetitions){
+            case 2:
+                list.add(b);
+                nRepetitions--;
+            case 1:
+                list.add(b);
+                nRepetitions--;
+                break;
+            default:
+                if(nRepetitions <= 130)
+                    list.add((byte)(-((nRepetitions)-2)));
+                else
+                    list.add((byte)-128);
+                list.add(b);
+                nRepetitions -= 130;
+                break;
+            }
+        }
+    }
 	
 	public static List<Byte> decode(List<Byte> encoded){
 		List<Byte> decoded = new ArrayList<>();

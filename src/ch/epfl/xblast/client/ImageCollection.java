@@ -12,17 +12,22 @@ import javax.imageio.ImageIO;
 
 public final class ImageCollection {
     
-    private final String dirName;
+    
     private final Map<Integer, Image> images;
     
-    public ImageCollection(String dirName) throws URISyntaxException, IOException{
-        this.dirName = dirName;
-        File dir = new File(ImageCollection.class.getClassLoader().getResource(dirName).toURI());
+    public ImageCollection(String dirName){
         images = new HashMap<>();
-        for(File f : dir.listFiles()){
-            String name = f.getName();
-            int index = Integer.parseInt(name.substring(0, 3));
-            images.put(index, ImageIO.read(f));
+        File dir;
+        try {
+            dir = new File(ImageCollection.class.getClassLoader().getResource(dirName).toURI());
+            for(File f : dir.listFiles()){
+                String name = f.getName();
+                int index = Integer.parseInt(name.substring(0, 3));
+                images.put(index, ImageIO.read(f));
+            }
+        } catch (URISyntaxException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
     

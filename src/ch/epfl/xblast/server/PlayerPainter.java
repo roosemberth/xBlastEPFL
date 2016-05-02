@@ -10,13 +10,15 @@ public final class PlayerPainter {
     private PlayerPainter(){}
     
     private static final int stepsId[] = {0,1,0,2};
+    
     private static final byte BYTE_FOR_DEAD = 15;
+    
     public static byte byteForPlayer(int tick, Player p){ 
         //CHECK WHAT ELSE NEEDS TO BE ADDED
         LifeState ls = p.lifeState();
         SubCell c = p.position();
         
-        int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 5 : p.id().ordinal());
+        int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 4 : p.id().ordinal());
         
         if(ls.canMove()){
             int steps = 0;

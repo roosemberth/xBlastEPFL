@@ -7,9 +7,9 @@ public final class ExplosionPainter {
     
     public static byte byteForBomb(Bomb b){
         if(Integer.bitCount(b.fuseLength()) == 1){
-            return (byte)1;
+            return (byte)21;
         }
-        return (byte)0;
+        return (byte)20;
     }
     
     public static byte byteForBlast(boolean n, boolean e, boolean s, boolean w){
