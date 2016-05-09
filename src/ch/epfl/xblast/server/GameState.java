@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
@@ -34,10 +33,11 @@ public final class GameState {
     private final List<Sq<Cell>> blasts;
     
     private static final List<List<PlayerID>> playerPermutations = Lists.permutations(Arrays.asList(PlayerID.values()));
-    //or maybe just use ticks%numPermutations
-    private static int indexPermutation = 0;
     
     private static final Random RANDOM = new Random(2016);
+
+    //or maybe just use ticks%numPermutations
+    private int indexPermutation = 0;
     
     private static final Block[] transformBlocks = {Block.BONUS_BOMB,Block.BONUS_RANGE,Block.FREE};
     
@@ -56,7 +56,7 @@ public final class GameState {
                     List<Sq<Sq<Cell>>> explosions, List<Sq<Cell>> blasts){
         if(ticks < 0)
         	throw new IllegalArgumentException("Can't start at negative ticks");
-        if (players.size() != 4) 
+        if (players.size() != PlayerID.values().length) 
         	throw new IllegalArgumentException("Invalid number of players");
 
         this.ticks = ticks;
@@ -128,7 +128,7 @@ public final class GameState {
      * @return the list of currently alivePlayers
      */
     public List<Player> alivePlayers(){
-        List<Player> alivePlayers = new ArrayList<>(4);
+        List<Player> alivePlayers = new ArrayList<>();
         for(Player p : players){
             if(p.isAlive())
                 alivePlayers.add(p);
@@ -140,16 +140,7 @@ public final class GameState {
      * @return	A Map containing Fused bombs and their positions (in no particular order)
      */
     public Map<Cell, Bomb> bombedCells(){
-        Map<Cell,Bomb> bombedCells = new HashMap<Cell,Bomb>(bombs.size()){
-            // Serializable derived class
-            private static final long serialVersionUID = 2821855353073180883L;
-            @Override public String toString(){
-                this.entrySet().stream().forEach(entry -> {
-                    System.out.println(entry.getValue().ownerId()+"@"+entry.getKey()+" - " + entry.getValue().fuseLength());
-                });
-                return "";
-            }
-        };
+        Map<Cell,Bomb> bombedCells = new HashMap<Cell,Bomb>(bombs.size());
         for(Bomb b : bombs){
             bombedCells.put(b.position(), b);
         }
@@ -175,10 +166,11 @@ public final class GameState {
      */
     public GameState next(Map<PlayerID, Optional<Direction>> speedChangeEvents, Set<PlayerID> bombDropEvents){
         //Find bonus cells containing player
-        List<Player> orderedPlayers = new ArrayList<>(4);
+        List<Player> orderedPlayers = new ArrayList<>();
         
+        Map<PlayerID, Player> hashedPlayers = listToHash(players);
         for(PlayerID id : playerPermutations.get(indexPermutation)){
-            orderedPlayers.add(listToHash(players).get(id));
+            orderedPlayers.add(hashedPlayers.get(id));
         }
 
         //1. Evolution des particules d'explosion
@@ -266,25 +258,25 @@ public final class GameState {
      */
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses, Set<Cell> blastedCells1){
         List<Sq<Block>> newBlocks = new ArrayList<>(); 
-        for(int y = 0; y < Cell.ROWS; y++){
-            for(int x = 0; x < Cell.COLUMNS; x++){
-                Cell curPos = new Cell(x,y);
-                if (consumedBonuses.contains(curPos)){
-                    newBlocks.add(Sq.constant(Block.FREE));
-                } else if (!blastedCells1.contains(curPos)){
-                    newBlocks.add(board0.blocksAt(curPos).tail());
-                } else {
-                    if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
-                        newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
-                                Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
-                    }
-                    else if(board0.blockAt(curPos).isBonus())
-                        newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
-                    else
-                        newBlocks.add(board0.blocksAt(curPos).tail());
+
+        Cell.ROW_MAJOR_ORDER.stream().forEachOrdered(curPos -> {
+            if (consumedBonuses.contains(curPos)){
+                newBlocks.add(Sq.constant(Block.FREE));
+            } else if (!blastedCells1.contains(curPos)){
+                newBlocks.add(board0.blocksAt(curPos).tail());
+            } else {
+                if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
+                    newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
+                            Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
                 }
+                else if(board0.blockAt(curPos).isBonus())
+                    newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
+                else
+                    newBlocks.add(board0.blocksAt(curPos).tail());
             }
-        }
+        
+        });
+
         Board nextBoard = new Board(newBlocks);
         return nextBoard;
     }
@@ -467,6 +459,8 @@ public final class GameState {
         List<Bomb> newBombs = new ArrayList<>();
         
         for(Player p : players0){
+            // This is an unlikely condition, therefore the overhead cost of having a continue instruction,
+            // shouldn't be taken into account.
         	if (p==null) continue;
             if(bombDropEvents.contains(p.id())){
                 int numBombs = 0;

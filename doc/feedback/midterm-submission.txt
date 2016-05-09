@@ -1,0 +1,121 @@
+* Etape 1 [12/13]
+
+** Enum Direction [2/2]
+
+** Class Cell [7/7]
+*** Méthode rowMajorOrder [1/1]
+*** Méthode spiralOrder [3/3]
+*** Méthode equals [1/1]
+*** Autres méthodes et constructeur [2/2]
+
+** Class SubCell [3/4]
+-1: Les attributs ne sont pas `private`
+*** Méthode distanceToCentral [1/1]
+*** Méthode equals [1/1]
+*** Autres méthodes et constructeur [2/2]
+
+* Etape 2 [10/13]
+
+** Classe Board [5/7]
+*** Déclaration de la classe, des attributs et des méthodes [0/1]
+-1: L'attribut blocks n'est pas déclaré "private final" (faille d'immuabilité)
++0: En général lorsque vous avez des warnings, c'est qu'il y a une raison! Corrigez les donc et n'ayez recourt à @SupressWarning que lorsque vous êtes sûr de ce que vous faite, souvent cette pratique est réservée aux programmeurs avancés. Corrigez un des warnings vous aurait évité de perdre 1 point (plus à l'avenir!) car l'une des méthodes n'est pas utilisée.
+*** Constructeur [1/1]
+*** Méthode ofQuadrantNWBlocksWalled [1/2]
+-1: Non-modularisation de la verification des arguments
+*** Méthode ofInnerBlocksWalled [2/2]
++0: Vous auriez pu faire appel à ofRows pour générer les séquences constantes
++0: Non-modularisation de la verification des arguments
+*** Méthode ofRows [1/1]
++0: Non-modularisation de la verification des arguments
+
+** Classe Lists [3/3]
+
+** Enumeration Block [1/2]
+-1: Utilisation inutile d'un/des if pour retourner la/les valeur/s
++0: méthode isFree non utilisée par les autres méthodes
+
+** Interface Ticks [1/1]
+
+* Etape 3 [13/13]
++0: En général, "if(cond) return true; else return false" peut être remplacé par "return cond".
+
+** Classe Player [5/5]
+*** Constructeurs [2/2]
+*** Accesseurs [1/1]
+*** Méthode statesForNextLife [2/2]
+
+** Classe Player.LifeState [1/1]
+*** Constructeur et méthodes [1/1]
+
+** Classe Player.DirectedPosition [3/3]
+*** Constructeur et accesseurs [1/1]
+*** Méthodes moving & stopped [2/2]
+
+** Classe Bomb [3/3]
+*** Constructeurs [1/1]
+*** Méthode explosion [2/2]
+
+** Classe ArgumentChecker [1/1]
+*** Constructeur et méthodes [1/1]
+
+* Etape 4 [12/13]
+
+** Classe List [1/1]
+*** Méthode Permutation [1/1]
+
+** Enumération Bonus [1/1]
+
+** Enumération Block [2/2]
+*** Méthode associatedBonus [1/1]
+*** Méthode canHostPlayer [1/1]
+
+** Interface Time [1/1]
+
+** Interface Ticks [1/1]
++0: Fields must be explicitly final
+
+** Class GameState [6/7]
+-1: Must return immutable collections
+*** Méthode nextBlasts [3/3]
+*** Autres méthodes [4/4]
+
+* Etape 5 [10/13]
+
+** Classe Cell [1/1]
+*** Méthode hashCode [1/1]
+
+** Classe SubCell [1/1]
+*** Méthode hashCode [1/1]
+
+** Classe GameState [8/11]
+-2: N'utilisez pas de compteur statique (indexPermutation)! Imaginez que votre serveur lance plusieurs parties en même temps, sa valeur sera incrémentée pour chaque tick de chaque partie, ça n'a plus aucun sens. Basez vous uniquement sur tick actuel.
+*** Méthode bombedCells [1/1]
++0: Vous redéfinissez le toString de HashMap?!? D'abord, le serialVersionUID est inutile dans votre cas, ensuite, le toString n'est PAS sensé faire de print et pour finir, le HashMap a déjà un toString similaire, pas besoin de le redéfinir. Vous auriez plutôt du ajouter un toString dans Bomb simplement! Je vois bien que c'est juste pour "debugger", cependant, n'oubliez pas d'enlever ces choses avant le rendu, j'aurais aimé ne pas voir ça...
+*** Méthode blastedCells [1/1]
+*** Méthode next [4/4]
++0: Initialisation de orderedPLayers: pas de constantes en hardcode! En l'occurrence, cette constante ne fait qu'aider l'optimisation et n'a aucune conséquence logique, c'est vrai. Néanmoins, le numéro 4 ne tombe pas du ciel, c'est le nombre de joueurs, donc utilisez PlayerID.values().length ou même players.size().
++0: Votre méthode listToHash construit sans cesse la même map, donc ne l'appelez pas à chaque fois dans une boucle!
+*** Méthode nextBoard ou similaire [1/2]
+-1: Au lieu d’itérer sur 13*15 cellules, vous pouvez utiliser une boucle for-each sur ROW_MAJOR_ORDER par exemple.
+*** Méthode nextExplosions ou similaire [1/1]
+*** Méthode newlyDroppedBombs ou similaire [2/2]
++0: Évitez d'utiliser 'continue' (d'autant plus qu'il n'y a aucune raison pour 'p' d'être null)
+*** Commentaires généraux [0/0]
+
+* Etape 6 [12/13]
+
+** Style [2/3]
+-1: No @author in class javadoc.
+
+** Classe GameState [10/10]
+*** Direction du regard [1/1]
+*** Changement de direction parallèle [1/1]
+*** Changement de direction arrêt [1/1]
+*** Changement de direction perpendiculaire [2/2]
+*** Blocage par mur [1/1]
+*** Blocage par bombe [1/1]
+*** Evolution de l'état [1/1]
+*** Evolution des capacités [1/1]
+*** Ordre d'évolution [1/1]
+

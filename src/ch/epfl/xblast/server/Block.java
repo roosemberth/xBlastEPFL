@@ -28,20 +28,14 @@ public enum Block {
      * @return whether or not the given block is free
      */
     public boolean isFree(){
-        if(this == FREE){
-            return true;
-        }
-        return false;
+        return this == FREE;
     }
     
     /**
      * @return whether or not the block can host the player
      */
     public boolean canHostPlayer(){
-        if(this == FREE || this.isBonus()){
-            return true;
-        }
-        return false;
+        return (this == FREE || this.isBonus());
     }
     
     
@@ -49,10 +43,7 @@ public enum Block {
      * @return whether or not the block should cast a shadow
      */
     public boolean castsShadow(){
-        if(this == INDESTRUCTIBLE_WALL || this == DESTRUCTIBLE_WALL || this == CRUMBLING_WALL){
-            return true;
-        }
-        return false;
+        return (this == INDESTRUCTIBLE_WALL || this == DESTRUCTIBLE_WALL || this == CRUMBLING_WALL);
     }
     
    
@@ -60,10 +51,7 @@ public enum Block {
      * @return whether or not the block is of type bonus
      */
     public boolean isBonus(){
-        if(this == BONUS_BOMB || this == BONUS_RANGE){
-            return true;
-        }
-        return false;
+        return (this == BONUS_BOMB || this == BONUS_RANGE);
     }
     
     /**
