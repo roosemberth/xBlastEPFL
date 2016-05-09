@@ -1,25 +1,23 @@
 package ch.epfl.xblast.server;
 
+import ch.epfl.xblast.server.Bomb;
+
 public final class ExplosionPainter {
-    private ExplosionPainter(){}    
+    public static final byte BYTE_FOR_BOMB_B = 20;
+    public static final byte BYTE_FOR_BOMB_W = 21;
     
-    public final static byte BYTE_FOR_EMPTY = (byte)16;
+    public static final byte BYTE_FOR_EMPTY = 16;
+    
+    private ExplosionPainter(){}
     
     public static byte byteForBomb(Bomb b){
-        if(Integer.bitCount(b.fuseLength()) == 1){
-            return (byte)1;
-        }
-        return (byte)0;
+        return (Integer.bitCount(b.fuseLength())==1)?BYTE_FOR_BOMB_W:BYTE_FOR_BOMB_B;
     }
-    
-    public static byte byteForBlast(boolean n, boolean e, boolean s, boolean w){
-        byte maskNorth = n ? (byte)8 : (byte)0; 
-        byte maskEast  = e ? (byte)4 : (byte)0; 
-        byte maskSouth = s ? (byte)2 : (byte)0; 
-        byte maskWest  = w ? (byte)1 : (byte)0; 
-        
-        byte result = (byte) (maskNorth | maskEast | maskSouth | maskWest);
-        
-        return result;
+
+    public static byte byteForBlast(boolean N, boolean E, boolean S, boolean W){
+        return (byte) ((N?1:0) << 3 |
+                       (E?1:0) << 2 |
+                       (S?1:0) << 1 |
+                       (W?1:0) << 0);
     }
 }
