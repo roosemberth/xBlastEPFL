@@ -8,7 +8,8 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
 public final class GameState {
-
+    public static final int MAX_NUM_OF_TICKS = 60;
+    public static final int NUM_PLAYERS = 4;
     public GameState(List<Player> players, List<Image> boardImages,
             List<Image> bombsExplImages,List<Image> scoreImages,List<Image> timeImages){
         this.players = Objects.requireNonNull(players);
@@ -18,17 +19,18 @@ public final class GameState {
         this.timeImages = Objects.requireNonNull(timeImages);
     }
     
-    private final List<Player> players;
-    private final List<Image> boardImages;
-    private final List<Image> bombsExplImages;
-    private final List<Image> scoreImages;
-    private final List<Image> timeImages;
+    public final List<Player> players;
+    public final List<Image> boardImages;
+    public final List<Image> bombsExplImages;
+    public final List<Image> scoreImages;
+    public final List<Image> timeImages;
     
-    public final class Player{
-        private final PlayerID id;
-        private final int lives;
-        private final SubCell position;
-        private final Image image;
+    public static final class Player{
+        public final PlayerID id;
+        public final int lives;
+        public final SubCell position;
+        public final Image image;
+
         public Player(PlayerID id, int lives, SubCell position, Image image){
             this.id = id;
             this.lives = lives;
