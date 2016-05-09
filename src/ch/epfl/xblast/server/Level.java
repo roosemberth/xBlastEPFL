@@ -30,7 +30,7 @@ public final class Level {
 		return gs;
 	}
 	
-	private static GameState defaultGameState(){
+	public static GameState defaultGameState(){
 	    Block __ = Block.FREE;
         Block XX = Block.INDESTRUCTIBLE_WALL;
         Block xx = Block.DESTRUCTIBLE_WALL;
@@ -60,7 +60,8 @@ public final class Level {
         GameState gameState = new GameState(board, players);
         return gameState;
 	}
-	private static BoardPainter defaultBoardPainter(){
+
+	public static BoardPainter defaultBoardPainter(){
         Map<Block,BlockImage> blockPalette = new HashMap<>();
         for(Block b : Block.values()){
             blockPalette.put(b, BlockImage.values()[b.ordinal() > 0 ? b.ordinal()+1 : b.ordinal()]);
