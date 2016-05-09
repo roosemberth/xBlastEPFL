@@ -1,6 +1,5 @@
 package ch.epfl.xblast.server;
 
-import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.LifeState;
@@ -16,7 +15,7 @@ public final class PlayerPainter {
         LifeState ls = p.lifeState();
         SubCell c = p.position();
         
-        int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 5 : p.id().ordinal());
+        int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 4 : p.id().ordinal());
         
         if(ls.canMove()){
             int steps = 0;
