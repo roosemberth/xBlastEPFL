@@ -11,18 +11,28 @@ import java.util.NoSuchElementException;
 import javax.imageio.ImageIO;
 
 public final class ImageCollection {
-    
     private final String dirName;
     private final Map<Integer, Image> images;
     
-    public ImageCollection(String dirName) throws URISyntaxException, IOException{
+    public ImageCollection(String dirName) {
         this.dirName = dirName;
-        File dir = new File(ImageCollection.class.getClassLoader().getResource(dirName).toURI());
+
+        File dir;
+        try {
+            dir = new File(ImageCollection.class.getClassLoader().getResource(dirName).toURI());
+        } catch (URISyntaxException e1) {
+            throw new RuntimeException("Couldn't load requested resource from ClassLoader path: ", e1);
+        }
+
         images = new HashMap<>();
         for(File f : dir.listFiles()){
             String name = f.getName();
             int index = Integer.parseInt(name.substring(0, 3));
-            images.put(index, ImageIO.read(f));
+            try {
+                images.put(index, ImageIO.read(f));
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't read image " + name + ": ", e);
+            }
         }
     }
     
@@ -33,5 +43,9 @@ public final class ImageCollection {
     }
     public Image imageOrNull(int index){
         return images.get(index);
+    }
+    
+    @Override public String toString(){
+        return "ImageCollection of " + dirName;
     }
 }
