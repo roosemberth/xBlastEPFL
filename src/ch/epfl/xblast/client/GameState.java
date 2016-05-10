@@ -26,8 +26,6 @@ public final class GameState {
         this.timeImages = Collections.unmodifiableList(new ArrayList<>(timeImages));
     }
     
-   
-
     
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
