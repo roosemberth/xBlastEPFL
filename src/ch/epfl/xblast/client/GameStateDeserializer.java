@@ -32,8 +32,8 @@ public final class GameStateDeserializer {
         List<Image> boardImages = readBoard(gs.subList(1, bytesBoard+1));
         List<Image> bombsExplImages = readBombsExplosions(gs.subList(bytesBoard+2, bytesBoard+bytesBombsExplosions+2));
         List<Player> players = readPlayers(gs.subList(bytesBoard+bytesBombsExplosions+2, bytesBoard+bytesBombsExplosions+16+2));
-        List<Image> scoreImages = null;//readScore(players);
-        List<Image> timerImages = readTimer(0); 
+        List<Image> scoreImages = readScore(players);
+        List<Image> timerImages = readTimer(gs.get(bytesBoard+bytesBombsExplosions+16+2)); 
         
         return new GameState(players, boardImages, bombsExplImages, scoreImages, timerImages);
     }
@@ -67,8 +67,6 @@ public final class GameStateDeserializer {
             i++;
         }
         for(Cell c : Cell.ROW_MAJOR_ORDER){
-            System.out.println(c);
-            System.out.println(order.get(c));
             int index = decoded.get(order.get(c));
             images.add(BLOCK_COLLECTION.imageOrNull(index));
         }
@@ -88,9 +86,9 @@ public final class GameStateDeserializer {
     
     private static List<Image> readScore(List<Player> players){
         List<Image> images = new ArrayList<>();
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 2; i++){
             int playerId = 2 * i;
-            int dead = players.get(i).lives <= 0 ? 1 : 0;
+            int dead = players.get(i).getLives() <= 0 ? 1 : 0;
             images.add(SCORE_COLLECTION.imageOrNull(playerId+dead));
             images.add(SCORE_COLLECTION.imageOrNull(10));
             images.add(SCORE_COLLECTION.imageOrNull(11));
@@ -98,14 +96,23 @@ public final class GameStateDeserializer {
         for(int i = 0; i < 8; i++){
             images.add(6, SCORE_COLLECTION.imageOrNull(12));
         }
+        for(int i = 2; i < 4; i++){
+            int playerId = 2 * i;
+            int dead = players.get(i).getLives() <= 0 ? 1 : 0;
+            images.add(SCORE_COLLECTION.imageOrNull(playerId+dead));
+            images.add(SCORE_COLLECTION.imageOrNull(10));
+            images.add(SCORE_COLLECTION.imageOrNull(11));
+        }
         return images;
     }
     
-    private static List<Image> readTimer(int ticks){
-        //DOESNT UPDATE YET
+    private static List<Image> readTimer(int remainingSec){
         List<Image> images = new ArrayList<>();
         for(int i = 0; i < 60; i++){
-            images.add(SCORE_COLLECTION.imageOrNull(21));
+            if(i >= remainingSec)
+                images.add(SCORE_COLLECTION.imageOrNull(20));
+            else
+                images.add(SCORE_COLLECTION.imageOrNull(21));
         }
         return images;
     }
