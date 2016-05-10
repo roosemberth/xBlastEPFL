@@ -461,7 +461,7 @@ public final class GameState {
      * @param players0
      * @param bombDropEvents
      * @param bombs0
-     * @return Lis of bombs of the next state
+     * @return List of bombs of the next state
      */
     private static List<Bomb> newlyDroppedBombs(List<Player> players0, Set<PlayerID> bombDropEvents, List<Bomb> bombs0){
         List<Bomb> newBombs = new ArrayList<>();
