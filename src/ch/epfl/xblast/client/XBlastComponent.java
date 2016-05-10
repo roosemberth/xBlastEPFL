@@ -83,7 +83,7 @@ public final class XBlastComponent extends JComponent{
              }
         }
     }
-    public static List<Player> sortPlayers(List<Player> players, PlayerID id){
+    private static List<Player> sortPlayers(List<Player> players, PlayerID id){
         List<Player> playerSorted = new ArrayList<>(players);
         Comparator<Player> positionComparator = (a,b) ->  Integer.compare(a.getPosition().y(), b.getPosition().y());
         Comparator<Player> finalComparator = positionComparator.thenComparing((a,b) -> a.getId() == id ? 1 : (b.getId() == id ? -1 : 0));
