@@ -14,7 +14,7 @@ import ch.epfl.xblast.Lists;
  * Represents the current state of the game board, y compris les sequences d'interaction de chaque cell.
  */
 public final class Board {
-    private List<Sq<Block>> blocks;
+    private final List<Sq<Block>> blocks;
     
     /**
      * Creates a Game Board from a List of Cell Sequences
