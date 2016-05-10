@@ -22,7 +22,7 @@ public final class GameState {
         this.players = Collections.unmodifiableList(new ArrayList<>(players));
         this.boardImages = Collections.unmodifiableList(new ArrayList<>(boardImages));
         this.bombsExplImages = Collections.unmodifiableList(new ArrayList<>(bombsExplImages));
-        this.scoreImages = null;//Collections.unmodifiableList(new ArrayList<>(scoreImages));
+        this.scoreImages = Collections.unmodifiableList(new ArrayList<>(scoreImages));
         this.timeImages = Collections.unmodifiableList(new ArrayList<>(timeImages));
     }
     
@@ -65,16 +65,32 @@ public final class GameState {
 
 
     public static final class Player{
-        public final PlayerID id;
-        public final int lives;
-        public final SubCell position;
-        public final Image image;
+        private final PlayerID id;
+        private final int lives;
+        private final SubCell position;
+        private final Image image;
         
         public Player(PlayerID id, int lives, SubCell position, Image image){
             this.id = Objects.requireNonNull(id);
             this.lives = lives;
             this.position = Objects.requireNonNull(position);
             this.image = image;
+        }
+
+        public PlayerID getId() {
+            return id;
+        }
+
+        public int getLives() {
+            return lives;
+        }
+
+        public SubCell getPosition() {
+            return position;
+        }
+
+        public Image getImage() {
+            return image;
         }
         
         
