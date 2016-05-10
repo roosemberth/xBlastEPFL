@@ -24,7 +24,7 @@ public final class GameStateSerializer {
 		for(Cell c : Cell.ROW_MAJOR_ORDER){
 		    if(gs.bombedCells().containsKey(c))
 		        plainBombs.add(ExplosionPainter.byteForBomb(gs.bombedCells().get(c)));
-		    else if(gs.blastedCells().contains(c) && gs.board().blockAt(c).canHostPlayer()){
+		    else if(gs.blastedCells().contains(c) && gs.board().blockAt(c).isFree()){
 		        plainBombs.add(ExplosionPainter.byteForBlast(
 		                gs.blastedCells().contains(c.neighbor(Direction.N)), 
 		                gs.blastedCells().contains(c.neighbor(Direction.E)), 
