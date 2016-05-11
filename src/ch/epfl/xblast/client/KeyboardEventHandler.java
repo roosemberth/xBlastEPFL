@@ -12,7 +12,6 @@ import ch.epfl.xblast.PlayerAction;
 
 public class KeyboardEventHandler extends KeyAdapter implements KeyListener{
 
-    //MORE LOGIC INT,PA?
     private Map<Integer,PlayerAction> keys;
     private Consumer<PlayerAction> consumer;
     
@@ -22,7 +21,8 @@ public class KeyboardEventHandler extends KeyAdapter implements KeyListener{
     }
     
     public void keyPressed(KeyEvent e){
-        consumer.accept(keys.get(e.getKeyCode()));
+        if(keys.containsKey(e.getKeyCode()))
+            consumer.accept(keys.get(e.getKeyCode()));
     }
     
     
