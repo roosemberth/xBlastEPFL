@@ -33,11 +33,9 @@ public class Server {
     public Server(int maxClients, int port) throws IOException{
         clients = new HashMap<>();
         this.maxClients = maxClients;
-        
         gameState = Level.DEFAULT_LEVEL.getGs();
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
         channel.bind(new InetSocketAddress(port));
-       
     }
     
     public void run() throws IOException{
@@ -56,15 +54,17 @@ public class Server {
             senderAdress = channel.receive(buffer);
             if(buffer.get(0) == PlayerAction.JOIN_GAME.ordinal() && !clients.containsKey(senderAdress)){
                 System.out.println("New client at adress " + senderAdress.toString());
-                clients.put(senderAdress, clients.size() < PlayerID.values().length ? PlayerID.values()[clients.size()] : null);
+                clients.put(senderAdress, PlayerID.values()[clients.size()]);
             }
         }
     }
     
     private void startGame() throws IOException{
         System.out.println("Starting game...");
-        long oldTime = System.currentTimeMillis();
+        long oldTime = System.nanoTime();
+        
         while(!gameState.isGameOver()) { 
+            oldTime = System.nanoTime();
             List<Byte> gamestatePacket = GameStateSerializer.serialize(Level.DEFAULT_LEVEL.getBp(), gameState);
             //Send gamestate to clients
             ByteBuffer buffer = ByteBuffer.allocate(gamestatePacket.size());
@@ -82,18 +82,19 @@ public class Server {
             List<PlayerEvent> events = checkEvents();
             
             gameState = gameState.next(PlayerEvent.getSpeedChangeEvents(events), PlayerEvent.getBombDropEvents(events));
-            long newTime = System.currentTimeMillis();
+            long newTime = System.nanoTime();
+            
             try {
-                Thread.sleep(Math.max(((Time.MS_PER_S/Ticks.TICKS_PER_SECOND)-(newTime-oldTime)),0));
+                Thread.sleep((long) Math.max(((Time.MS_PER_S/Ticks.TICKS_PER_SECOND)-(newTime-oldTime)/1000000.0),0));
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            oldTime = newTime;
         }
         
-        System.out.println("Winner is" + (gameState.winner().isPresent() ? gameState.winner() : "nobody") + "!");
+        System.out.println("Winner is" + (gameState.winner().orElse(null)==null ? gameState.winner() : "nobody") + "!");
     }
+    
     
     private void close() throws IOException{
         channel.close();
@@ -103,8 +104,10 @@ public class Server {
         SocketAddress sender = null;
         ByteBuffer buffer = ByteBuffer.allocate(1);
         while((sender=channel.receive(buffer)) != null){
-            if(clients.containsKey(sender) && clients.get(sender) != null)
+            if(clients.containsKey(sender) && clients.get(sender) != null){
+                System.out.println("Received even from: " + sender + " Event: " + buffer.get(0));
                 events.add(new PlayerEvent(clients.get(sender), PlayerAction.values()[(int)buffer.get(0)]));
+            }
         }
         return events;
     }
@@ -119,6 +122,7 @@ public class Server {
             }
         }
     }
+
     private static class PlayerEvent{
         //Used to handle the <Optional<Direction>>
         public static Map<PlayerID, Optional<Direction>> getSpeedChangeEvents(List<PlayerEvent> events) {
@@ -133,11 +137,9 @@ public class Server {
                         direction = Optional.of(Direction.E);
                         break;
                     case MOVE_S:
-                        
                         direction = Optional.of(Direction.S);
                         break;
                     case MOVE_W:
-                        
                         direction = Optional.of(Direction.W);
                         break;
                     case STOP:
@@ -145,8 +147,10 @@ public class Server {
                         break;
                         
                 }
-                if(direction != null)
+                if(direction != null){
+                    System.out.println("Processed event from player " + event.id + " " + event.action);
                     speedEvents.put(event.id,direction);
+                }
             }
             return Collections.unmodifiableMap(speedEvents);
         }
