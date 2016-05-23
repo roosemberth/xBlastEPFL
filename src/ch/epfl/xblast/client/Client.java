@@ -69,16 +69,17 @@ public final class Client {
         SwingUtilities.invokeAndWait(() -> createUI());
     }
     
-    public void run() throws IOException{
+    public void run() throws IOException, InterruptedException{
         GameState gamestate = null;
         SocketAddress adress = null;
         ByteBuffer buffer = ByteBuffer.allocate(1);
         while((adress=channel.receive(buffer)) == null || !adress.equals(serverAdress)){
             requestJoin();
+            Thread.sleep(1000);
         }
         
         id = PlayerID.values()[buffer.get(0)];
-        
+       System.out.println("ID is " + id);
         while(!shouldClose()){
             gamestate = getGamestate(); 
             if(gamestate != null)

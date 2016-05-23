@@ -92,7 +92,7 @@ public class Server {
             }
         }
         
-        System.out.println("Winner is" + (gameState.winner().orElse(null)==null ? gameState.winner() : "nobody") + "!");
+        System.out.println("Winner is " + (gameState.winner().orElse(null)!=null ? gameState.winner().get() : "nobody") + "!");
     }
     
     
@@ -105,8 +105,8 @@ public class Server {
         ByteBuffer buffer = ByteBuffer.allocate(1);
         while((sender=channel.receive(buffer)) != null){
             if(clients.containsKey(sender) && clients.get(sender) != null){
-                System.out.println("Received even from: " + sender + " Event: " + buffer.get(0));
                 events.add(new PlayerEvent(clients.get(sender), PlayerAction.values()[(int)buffer.get(0)]));
+                buffer.flip();
             }
         }
         return events;
@@ -116,9 +116,10 @@ public class Server {
         System.out.println("Sending ids...");
         ByteBuffer buffer = ByteBuffer.allocate(1);
         for(Map.Entry<SocketAddress, PlayerID> m: clients.entrySet()){
-            if(m.getValue() != null){
+            if(m.getValue() != null){   
                 buffer.put(0, (byte)(m.getValue().ordinal()));
                 channel.send(buffer, m.getKey());
+                buffer.flip();
             }
         }
     }
@@ -148,7 +149,6 @@ public class Server {
                         
                 }
                 if(direction != null){
-                    System.out.println("Processed event from player " + event.id + " " + event.action);
                     speedEvents.put(event.id,direction);
                 }
             }

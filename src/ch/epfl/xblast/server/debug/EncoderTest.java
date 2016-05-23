@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.RunLengthEncoder;
-import ch.epfl.xblast.client.GameStateDeserializer;
-import ch.epfl.xblast.server.Block;
-import ch.epfl.xblast.server.Board;
-import ch.epfl.xblast.server.BoardPainter;
-import ch.epfl.xblast.server.GameState;
+import ch.epfl.xblast.SubCell;
+import ch.epfl.xblast.client.GameState.Player;
+import ch.epfl.xblast.client.XBlastComponent;
 import ch.epfl.xblast.server.GameStateSerializer;
 import ch.epfl.xblast.server.Level;
-import ch.epfl.xblast.server.Player;
 
 public class EncoderTest {
 
@@ -45,6 +40,15 @@ public class EncoderTest {
 	        System.out.println(RunLengthEncoder.decode(RunLengthEncoder.encode(Arrays.asList((byte)3, (byte)3, (byte)3, (byte)3, (byte)3, (byte)2, (byte)1, (byte)2, (byte)2, (byte)2))));
 	        System.out.println(s);
 	        System.out.println(toCompare);
+	        
+
+	        List<Player> players = new ArrayList<>();
+	        players.add(new Player(PlayerID.PLAYER_1, 3, new SubCell(1,1),null));
+            players.add(new Player(PlayerID.PLAYER_2, 3, new SubCell(1,1),null));
+            players.add(new Player(PlayerID.PLAYER_3, 3, new SubCell(1,1),null));
+            players.add(new Player(PlayerID.PLAYER_4, 3, new SubCell(1,1),null));
+//	        List<Player> sortPlayers = XBlastComponent.sortPlayers(players, PlayerID.PLAYER_3);
+	        System.out.println("hey");
 	}
 
 }

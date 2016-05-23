@@ -52,7 +52,7 @@ public final class XBlastComponent extends JComponent{
             //TO ADD:: SORT PLAYERS AND DRAW FIRST THE MAIN PLAYER
             List<Player> players = gs.getPlayers();
             List<Player> sortedPlayers = sortPlayers(players, id);
-            for(Player p : players){
+            for(Player p :sortedPlayers){
                 Image image = p.getImage();
                 if(image != null)
                     g.drawImage(image, 4*p.getPosition().x()-24, 3*p.getPosition().y()-52, this);
