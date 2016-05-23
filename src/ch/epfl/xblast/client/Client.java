@@ -23,7 +23,7 @@ import ch.epfl.xblast.PlayerID;
 public final class Client {
     
     //COLS*ROWS*2 + NUM_INFOS*NUM_PLAYER + NUM_SIZE_INFO + TIMER(1)
-    private static int MAX_CAPACITY = Cell.COLUMNS*Cell.ROWS*2 + 4*PlayerID.values().length + 2 + 1;
+    private static int MAX_CAPACITY = Cell.COLUMNS*Cell.ROWS*2 + 4*PlayerID.values().length + 2 + 1+1;
     
     private SocketAddress serverAdress;
     private JFrame frame;
@@ -32,13 +32,12 @@ public final class Client {
     private PlayerID id;
     private DatagramChannel channel;
     
-    public Client(String hostName, int hostPort, int localPort) throws InvocationTargetException, InterruptedException, IOException{
+    public Client(String hostName, int hostPort)  throws InvocationTargetException, InterruptedException, IOException{
         serverAdress = new InetSocketAddress(hostName, hostPort);
         xbComponent = new XBlastComponent();
         
         //Create channel
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
-        channel.bind(new InetSocketAddress(localPort));
         channel.configureBlocking(false);
         
         //Set up the key event manager
@@ -78,8 +77,6 @@ public final class Client {
             Thread.sleep(1000);
         }
         
-        id = PlayerID.values()[buffer.get(0)];
-       System.out.println("ID is " + id);
         while(!shouldClose()){
             gamestate = getGamestate(); 
             if(gamestate != null)
@@ -114,9 +111,15 @@ public final class Client {
         
         if(sender == null)
             return null;
+        
         List<Byte> gamestateData = new ArrayList<>();
         gamestateBuffer.rewind();
         //Fill the list
+        Byte idB = gamestateBuffer.get();
+        if(id == null)
+            id = PlayerID.values()[idB];
+        else if(idB != (byte)id.ordinal())
+            return null;
         while(gamestateBuffer.hasRemaining()){
             gamestateData.add(gamestateBuffer.get());
         }
@@ -128,6 +131,7 @@ public final class Client {
     private void requestJoin() throws IOException{
         ByteBuffer buffer = ByteBuffer.allocate(1);
         buffer.put((byte)PlayerAction.JOIN_GAME.ordinal());
+        buffer.flip();
         channel.send(buffer, serverAdress);
     }
     

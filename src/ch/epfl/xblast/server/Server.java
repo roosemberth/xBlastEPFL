@@ -41,7 +41,7 @@ public class Server {
     public void run() throws IOException{
         System.out.println("Starting server");
         waitClients();
-        sendID();
+      //  sendID();
         channel.configureBlocking(false);
         startGame();
         close();
@@ -52,7 +52,8 @@ public class Server {
             ByteBuffer buffer = ByteBuffer.allocate(1);
             SocketAddress senderAdress = null;
             senderAdress = channel.receive(buffer);
-            if(buffer.get(0) == PlayerAction.JOIN_GAME.ordinal() && !clients.containsKey(senderAdress)){
+            buffer.flip();
+            if(buffer.get() == PlayerAction.JOIN_GAME.ordinal() && !clients.containsKey(senderAdress)){
                 System.out.println("New client at adress " + senderAdress.toString());
                 clients.put(senderAdress, PlayerID.values()[clients.size()]);
             }
@@ -67,10 +68,12 @@ public class Server {
             oldTime = System.nanoTime();
             List<Byte> gamestatePacket = GameStateSerializer.serialize(Level.DEFAULT_LEVEL.getBp(), gameState);
             //Send gamestate to clients
-            ByteBuffer buffer = ByteBuffer.allocate(gamestatePacket.size());
+            ByteBuffer buffer = ByteBuffer.allocate(gamestatePacket.size()+1);
+            buffer.position(1);
             for(Byte b : gamestatePacket)
                 buffer.put(b);
             for(Map.Entry<SocketAddress, PlayerID> entry : clients.entrySet()){
+                buffer.put(0, (byte)entry.getValue().ordinal());
                 buffer.rewind();
                 try {
                     channel.send(buffer, entry.getKey());
@@ -110,18 +113,6 @@ public class Server {
             }
         }
         return events;
-    }
-    
-    private void sendID() throws IOException{
-        System.out.println("Sending ids...");
-        ByteBuffer buffer = ByteBuffer.allocate(1);
-        for(Map.Entry<SocketAddress, PlayerID> m: clients.entrySet()){
-            if(m.getValue() != null){   
-                buffer.put(0, (byte)(m.getValue().ordinal()));
-                channel.send(buffer, m.getKey());
-                buffer.flip();
-            }
-        }
     }
 
     private static class PlayerEvent{

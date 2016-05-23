@@ -25,17 +25,8 @@ public final class Main {
                 e.printStackTrace();
             }
         }
-        if(args.length > 2){
-            try{
-                localPort = Integer.parseInt(args[2]);
-            }
-            catch(NumberFormatException e){
-                System.out.println("Unvalid local port");
-                e.printStackTrace();
-            }
-        }
         try {
-            Client client = new Client(hostAdress,hostPort,localPort);
+            Client client = new Client(hostAdress,hostPort);
             client.run();
         } catch (IOException e) {
             // TODO Auto-generated catch block
