@@ -10,7 +10,6 @@ public final class Main {
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         String hostAdress = "localhost";
         int hostPort = 2016;
-        int localPort = 2017;
         
         
         if(args.length > 0){

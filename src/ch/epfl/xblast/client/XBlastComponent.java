@@ -25,11 +25,14 @@ public final class XBlastComponent extends JComponent{
     private static final int BLOCK_HEIGHT = 48;
     private static final int LED_WIDTH = 16;
     
+    private static final int COMPONENT_WIDTH = 960;
+    private static final int COMPONENT_HEIGHT = 688;
+    
     private GameState gs = null;
     private PlayerID id;
     
     public Dimension getPreferredSize(){
-        return new Dimension(960, 688);
+        return new Dimension(COMPONENT_WIDTH, COMPONENT_HEIGHT);
     }
     
     public void paintComponent(Graphics g0){
@@ -38,18 +41,16 @@ public final class XBlastComponent extends JComponent{
             //DRAW BOARD
             List<Image> boardImages = gs.getBoardImages();
             List<Image> bombsExplImages = gs.getBombsExplImages();
-            for(int y = 0; y < Cell.ROWS; y++){
-                for(int x = 0; x < Cell.COLUMNS; x++){
-                    Image boardImage = boardImages.get(x%Cell.COLUMNS + y*Cell.COLUMNS);
-                    if(boardImage != null)
-                    g.drawImage(boardImage, x*BLOCK_WIDTH, y*BLOCK_HEIGHT, this);
-                    Image bombImage = bombsExplImages.get(x%Cell.COLUMNS + y*Cell.COLUMNS);
-                    if(bombImage != null)
-                        g.drawImage(bombImage, x*BLOCK_WIDTH, y*BLOCK_HEIGHT, this);
-                }
+            for(Cell c : Cell.ROW_MAJOR_ORDER){
+                Image boardImage = boardImages.get(c.x()%Cell.COLUMNS + c.y()*Cell.COLUMNS);
+                if(boardImage != null)
+                g.drawImage(boardImage, c.x()*BLOCK_WIDTH, c.y()*BLOCK_HEIGHT, this);
+                Image bombImage = bombsExplImages.get(c.x()%Cell.COLUMNS + c.y()*Cell.COLUMNS);
+                if(bombImage != null)
+                    g.drawImage(bombImage, c.x()*BLOCK_WIDTH, c.y()*BLOCK_HEIGHT, this);
+                
             }
             //DRAW PLAYERS
-            //TO ADD:: SORT PLAYERS AND DRAW FIRST THE MAIN PLAYER
             List<Player> players = gs.getPlayers();
             List<Player> sortedPlayers = sortPlayers(players, id);
             for(Player p :sortedPlayers){
@@ -59,12 +60,13 @@ public final class XBlastComponent extends JComponent{
             }
             //DRAW SCORE
             List<Image> scoreImages = gs.getScoreImages();
-            for(int x = 0; x < getWidth()/ICON_WIDTH; x++){
+            for(int x = 0; x <  COMPONENT_WIDTH/ICON_WIDTH; x++){
                Image image = scoreImages.get(x);
                if(image!= null){
                    g.drawImage(image, x*ICON_WIDTH, Cell.ROWS*BLOCK_HEIGHT, this);
                }
             }
+            
             //Draw lives
             Font font = new Font("Arial", Font.BOLD, 25);
             g.setColor(Color.WHITE);
@@ -75,7 +77,7 @@ public final class XBlastComponent extends JComponent{
             g.drawString(Integer.toString(players.get(3).getLives()), 912, 659);
             
             List<Image> timeImages = gs.getTimeImages();
-            for(int x = 0; x < getWidth()/LED_WIDTH; x++){
+            for(int x = 0; x < COMPONENT_WIDTH/LED_WIDTH; x++){
                 Image image = timeImages.get(x);
                 if(image!= null){
                     g.drawImage(image, x*LED_WIDTH, Cell.ROWS*BLOCK_HEIGHT+ICON_HEIGTH, this);
