@@ -23,7 +23,6 @@ import ch.epfl.xblast.Time;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
 public class Server {
-    
     private  GameState gameState;
     private  int maxClients;
     private  DatagramChannel channel;
@@ -31,6 +30,7 @@ public class Server {
 
     
     public Server(int maxClients, int port) throws IOException{
+        if(maxClients > PlayerID.values().length) throw new IllegalArgumentException("Unvalid number of players");
         clients = new HashMap<>();
         this.maxClients = maxClients;
         gameState = Level.DEFAULT_LEVEL.getGs();
