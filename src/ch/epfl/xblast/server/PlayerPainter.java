@@ -14,7 +14,6 @@ public final class PlayerPainter {
     private static final byte BYTE_FOR_DEAD = 15;
     
     public static byte byteForPlayer(int tick, Player p){ 
-        //CHECK WHAT ELSE NEEDS TO BE ADDED
         LifeState ls = p.lifeState();
         SubCell c = p.position();
         
@@ -31,9 +30,8 @@ public final class PlayerPainter {
             }
             return (byte)(playerID + p.direction().ordinal() * 3 + steps);
         }
-        //here probably add if dying...
         else if(ls.state() == State.DYING){
-            if(ls.lives() > 0){
+            if(ls.lives() > 1){
                 return (byte)(playerID + 12);
             }
             else{
