@@ -66,22 +66,9 @@ public class Server {
         
         while(!gameState.isGameOver()) { 
             oldTime = System.nanoTime();
-            List<Byte> gamestatePacket = GameStateSerializer.serialize(Level.DEFAULT_LEVEL.getBp(), gameState);
-            //Send gamestate to clients
-            ByteBuffer buffer = ByteBuffer.allocate(gamestatePacket.size()+1);
-            buffer.position(1);
-            for(Byte b : gamestatePacket)
-                buffer.put(b);
-            for(Map.Entry<SocketAddress, PlayerID> entry : clients.entrySet()){
-                buffer.put(0, (byte)entry.getValue().ordinal());
-                buffer.rewind();
-                try {
-                    channel.send(buffer, entry.getKey());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            
+            sendGamestate();
+            
             List<PlayerEvent> events = checkEvents();
             
             gameState = gameState.next(PlayerEvent.getSpeedChangeEvents(events), PlayerEvent.getBombDropEvents(events));
@@ -99,6 +86,23 @@ public class Server {
     }
     
     
+    private void sendGamestate(){
+        List<Byte> gamestatePacket = GameStateSerializer.serialize(Level.DEFAULT_LEVEL.getBp(), gameState);
+        //Send gamestate to clients
+        ByteBuffer buffer = ByteBuffer.allocate(gamestatePacket.size()+1);
+        buffer.position(1);
+        for(Byte b : gamestatePacket)
+            buffer.put(b);
+        for(Map.Entry<SocketAddress, PlayerID> entry : clients.entrySet()){
+            buffer.put(0, (byte)entry.getValue().ordinal());
+            buffer.rewind();
+            try {
+                channel.send(buffer, entry.getKey());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private void close() throws IOException{
         channel.close();
     }

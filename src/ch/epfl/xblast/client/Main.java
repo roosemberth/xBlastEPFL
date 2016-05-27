@@ -24,6 +24,7 @@ public final class Main {
                 e.printStackTrace();
             }
         }
+        
         try {
             Client client = new Client(hostAdress,hostPort);
             client.run();

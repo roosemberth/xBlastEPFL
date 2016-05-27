@@ -70,9 +70,7 @@ public final class Client {
     
     public void run() throws IOException, InterruptedException{
         GameState gamestate = null;
-        SocketAddress adress = null;
-        ByteBuffer buffer = ByteBuffer.allocate(1);
-        while((adress=channel.receive(buffer)) == null || !adress.equals(serverAdress)){
+        while((gamestate = getGamestate()) == null){
             requestJoin();
             Thread.sleep(1000);
         }
@@ -80,9 +78,9 @@ public final class Client {
         channel.configureBlocking(true);
         
         while(!shouldClose()){
-            gamestate = getGamestate(); 
             if(gamestate != null)
                 xbComponent.setGameState(gamestate, id);
+            gamestate = getGamestate(); 
         }
         
         close();
@@ -98,6 +96,7 @@ public final class Client {
         xbComponent.requestFocus();
     }
 
+    //Currently there's no way to check whether the game is over
     public boolean shouldClose(){
         return false;
     }
@@ -111,7 +110,7 @@ public final class Client {
         SocketAddress sender = null;
         sender = channel.receive(gamestateBuffer);
         
-        if(sender == null)
+        if(sender == null || !sender.equals(serverAdress))
             return null;
         
         List<Byte> gamestateData = new ArrayList<>();
