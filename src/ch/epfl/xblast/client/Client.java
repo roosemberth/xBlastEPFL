@@ -77,6 +77,8 @@ public final class Client {
             Thread.sleep(1000);
         }
         
+        channel.configureBlocking(true);
+        
         while(!shouldClose()){
             gamestate = getGamestate(); 
             if(gamestate != null)
