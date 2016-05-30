@@ -34,8 +34,6 @@ public final class GameState {
     private final List<Sq<Cell>> blasts;
     
     private static final List<List<PlayerID>> playerPermutations = Lists.permutations(Arrays.asList(PlayerID.values()));
-    //or maybe just use ticks%numPermutations
-    private static int indexPermutation = 0;
     
     private static final Random RANDOM = new Random(2016);
     
@@ -140,16 +138,7 @@ public final class GameState {
      * @return	A Map containing Fused bombs and their positions (in no particular order)
      */
     public Map<Cell, Bomb> bombedCells(){
-        Map<Cell,Bomb> bombedCells = new HashMap<Cell,Bomb>(bombs.size()){
-            // Serializable derived class
-            private static final long serialVersionUID = 2821855353073180883L;
-            @Override public String toString(){
-                this.entrySet().stream().forEach(entry -> {
-                    System.out.println(entry.getValue().ownerId()+"@"+entry.getKey()+" - " + entry.getValue().fuseLength());
-                });
-                return "";
-            }
-        };
+        Map<Cell,Bomb> bombedCells = new HashMap<Cell,Bomb>(bombs.size());
         for(Bomb b : bombs){
             bombedCells.put(b.position(), b);
         }
@@ -177,7 +166,7 @@ public final class GameState {
         //Find bonus cells containing player
         List<Player> orderedPlayers = new ArrayList<>(4);
         
-        for(PlayerID id : playerPermutations.get(indexPermutation)){
+        for(PlayerID id : playerPermutations.get(ticks%playerPermutations.size())){
             orderedPlayers.add(listToHash(players).get(id));
         }
 
@@ -229,9 +218,6 @@ public final class GameState {
         }
         //5. Evolution of players
         List<Player> newPlayers = nextPlayers(players, playerBonuses, bombedCells1, board1, blastedCells1, speedChangeEvents);
-       
-        //Update so it uses next permutation for conflict
-        indexPermutation = (indexPermutation+1)%playerPermutations.size();
         
         return new GameState(ticks+1,board1,newPlayers, bombs1, explosions1, blasts1);
     }
