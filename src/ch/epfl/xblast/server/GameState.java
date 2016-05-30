@@ -252,23 +252,20 @@ public final class GameState {
      */
     private static Board nextBoard(Board board0, Set<Cell> consumedBonuses, Set<Cell> blastedCells1){
         List<Sq<Block>> newBlocks = new ArrayList<>(); 
-        for(int y = 0; y < Cell.ROWS; y++){
-            for(int x = 0; x < Cell.COLUMNS; x++){
-                Cell curPos = new Cell(x,y);
-                if (consumedBonuses.contains(curPos)){
-                    newBlocks.add(Sq.constant(Block.FREE));
-                } else if (!blastedCells1.contains(curPos)){
-                    newBlocks.add(board0.blocksAt(curPos).tail());
-                } else {
-                    if(board0.blockAt(curPos) == Block.DESTRUCTIBLE_WALL){
-                        newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
-                                Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
-                    }
-                    else if(board0.blockAt(curPos).isBonus())
-                        newBlocks.add(board0.blocksAt(curPos).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
-                    else
-                        newBlocks.add(board0.blocksAt(curPos).tail());
+        for(Cell c : Cell.ROW_MAJOR_ORDER){   
+            if (consumedBonuses.contains(c)){
+                newBlocks.add(Sq.constant(Block.FREE));
+            } else if (!blastedCells1.contains(c)){
+                newBlocks.add(board0.blocksAt(c).tail());
+            } else {
+                if(board0.blockAt(c) == Block.DESTRUCTIBLE_WALL){
+                    newBlocks.add(Sq.repeat(Ticks.WALL_CRUMBLING_TICKS,Block.CRUMBLING_WALL).concat(
+                            Sq.constant(transformBlocks[RANDOM.nextInt(transformBlocks.length)])));
                 }
+                else if(board0.blockAt(c).isBonus())
+                    newBlocks.add(board0.blocksAt(c).tail().limit(Ticks.BONUS_DISAPPEARING_TICKS).concat(Sq.constant(Block.FREE)));
+                else
+                    newBlocks.add(board0.blocksAt(c).tail());
             }
         }
         Board nextBoard = new Board(newBlocks);
