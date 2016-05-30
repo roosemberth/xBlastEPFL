@@ -4,10 +4,10 @@ package ch.epfl.xblast;
  * Represents a subcell of the game. Each subcell corresponds to a movement (and therefore minimal distance) unit on the game.
  */
 public final class SubCell {
-    public static final int COLUMNS = 16;
-    public static final int ROWS = 16;
-    public static final int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
-    public static final int BOARD_HEIGHT = ROWS*Cell.ROWS;
+    private static final int COLUMNS = 16;
+    private static final int ROWS = 16;
+    private static final int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
+    private static final int BOARD_HEIGHT = ROWS*Cell.ROWS;
     
     private final int x, y;
     
