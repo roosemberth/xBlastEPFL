@@ -42,10 +42,10 @@ public final class XBlastComponent extends JComponent{
             List<Image> boardImages = gs.getBoardImages();
             List<Image> bombsExplImages = gs.getBombsExplImages();
             for(Cell c : Cell.ROW_MAJOR_ORDER){
-                Image boardImage = boardImages.get(c.x()%Cell.COLUMNS + c.y()*Cell.COLUMNS);
+                Image boardImage = boardImages.get(c.rowMajorIndex());
                 if(boardImage != null)
                 g.drawImage(boardImage, c.x()*BLOCK_WIDTH, c.y()*BLOCK_HEIGHT, this);
-                Image bombImage = bombsExplImages.get(c.x()%Cell.COLUMNS + c.y()*Cell.COLUMNS);
+                Image bombImage = bombsExplImages.get(c.rowMajorIndex());
                 if(bombImage != null)
                     g.drawImage(bombImage, c.x()*BLOCK_WIDTH, c.y()*BLOCK_HEIGHT, this);
                 

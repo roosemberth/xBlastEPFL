@@ -41,14 +41,14 @@ public class Server {
     public void run() throws IOException{
         System.out.println("Starting server");
         waitClients();
-      //  sendID();
+        
         channel.configureBlocking(false);
         startGame();
         close();
     }
     
     private void waitClients() throws IOException{
-        while(clients.size() != maxClients){
+        while(clients.size() < maxClients){
             ByteBuffer buffer = ByteBuffer.allocate(1);
             SocketAddress senderAdress = null;
             senderAdress = channel.receive(buffer);
@@ -81,7 +81,8 @@ public class Server {
                 e.printStackTrace();
             }
         }
-        
+        //Send last gamestate
+        sendGamestate();
         System.out.println("Winner is " + (gameState.winner().orElse(null)!=null ? gameState.winner().get() : "nobody") + "!");
     }
     
@@ -103,9 +104,11 @@ public class Server {
             }
         }
     }
+    
     private void close() throws IOException{
         channel.close();
     }
+    
     private List<PlayerEvent> checkEvents() throws IOException{
         List<PlayerEvent> events = new ArrayList<>();
         SocketAddress sender = null;
@@ -121,7 +124,7 @@ public class Server {
 
     private static class PlayerEvent{
         //Used to handle the <Optional<Direction>>
-        public static Map<PlayerID, Optional<Direction>> getSpeedChangeEvents(List<PlayerEvent> events) {
+        private static Map<PlayerID, Optional<Direction>> getSpeedChangeEvents(List<PlayerEvent> events) {
             Map<PlayerID, Optional<Direction>> speedEvents = new EnumMap<>(PlayerID.class);
             for (PlayerEvent event : events) {
                 Optional<Direction> direction = null;
@@ -150,7 +153,7 @@ public class Server {
             return Collections.unmodifiableMap(speedEvents);
         }
         
-        public static Set<PlayerID> getBombDropEvents(List<PlayerEvent> events){
+        private static Set<PlayerID> getBombDropEvents(List<PlayerEvent> events){
             Set<PlayerID> bombDropEvents = new HashSet<>();
             for (PlayerEvent event : events) {
                 if(event.action == PlayerAction.DROP_BOMB)

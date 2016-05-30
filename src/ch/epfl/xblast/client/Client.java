@@ -39,6 +39,31 @@ public final class Client {
         //Create channel
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
         channel.configureBlocking(false);
+       
+        
+        //launch the window
+        SwingUtilities.invokeAndWait(() -> createUI());
+    }
+    
+    public void run() throws IOException, InterruptedException{
+        GameState gamestate = null;
+        while((gamestate = getGamestate()) == null){
+            requestJoin();
+            Thread.sleep(1000);
+        }
+        
+        channel.configureBlocking(true);
+        
+        while(!shouldClose()){
+            if(gamestate != null)
+                xbComponent.setGameState(gamestate, id);
+            gamestate = getGamestate(); 
+        }
+        
+        close();
+    }
+
+    private void createUI(){
         
         //Set up the key event manager
         Map<Integer, PlayerAction> keyBindings = new HashMap<>();
@@ -64,29 +89,6 @@ public final class Client {
         
         xbComponent.addKeyListener(keyEventHandler);
         
-        //launch the window
-        SwingUtilities.invokeAndWait(() -> createUI());
-    }
-    
-    public void run() throws IOException, InterruptedException{
-        GameState gamestate = null;
-        while((gamestate = getGamestate()) == null){
-            requestJoin();
-            Thread.sleep(1000);
-        }
-        
-        channel.configureBlocking(true);
-        
-        while(!shouldClose()){
-            if(gamestate != null)
-                xbComponent.setGameState(gamestate, id);
-            gamestate = getGamestate(); 
-        }
-        
-        close();
-    }
-
-    private void createUI(){
         frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(xbComponent);
