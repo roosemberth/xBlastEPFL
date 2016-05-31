@@ -31,13 +31,28 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.Time;
 import ch.epfl.xblast.server.debug.RandomEventGenerator;
 
+/**
+ * Server
+ *
+ * This class is responsible for the server behavior.
+ * Keeps the internal logic of the game development.
+ * Tracks the state of the network connection.
+ *
+ * <Class Description>
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public class Server {
     private  GameState gameState;
     private  int maxClients;
     private  DatagramChannel channel;
     private  Map<SocketAddress,PlayerID> clients;
 
-    
+    /**
+     * Constructor.
+     * @param maxClients number of clients to wait for.
+     * @param port       port where to listen for clients.
+     */
     public Server(int maxClients, int port) throws IOException{
         if(maxClients > PlayerID.values().length) throw new IllegalArgumentException("Unvalid number of players");
         clients = new HashMap<>();
@@ -46,16 +61,26 @@ public class Server {
         channel = DatagramChannel.open(StandardProtocolFamily.INET);
         channel.bind(new InetSocketAddress(port));
     }
-    
+
+    /**
+     * Runs the server.
+     * @throws InterruptedException         if the waitClients thread is interrupted.
+     * @throws IOException                 if there's a problem with the network transport.
+     */
     public void run() throws IOException{
         System.out.println("Starting server");
         waitClients();
-        
+
         channel.configureBlocking(false);
         startGame();
         close();
     }
-    
+
+    /**
+     * Waits for clients to connect.
+     * @throws InterruptedException         if the wait thread is interrupted.
+     * @throws IOException                 if there's a problem with the network transport.
+     */
     private void waitClients() throws IOException{
         while(clients.size() < maxClients){
             ByteBuffer buffer = ByteBuffer.allocate(1);
@@ -68,21 +93,26 @@ public class Server {
             }
         }
     }
-    
+
+    /**
+     * Starts the game!
+     * @throws InterruptedException         if the wait thread is interrupted.
+     * @throws IOException                 if there's a problem with the network transport.
+     */
     private void startGame() throws IOException{
         System.out.println("Starting game...");
         long oldTime = System.nanoTime();
-        
+
         while(!gameState.isGameOver()) { 
             oldTime = System.nanoTime();
-            
+
             sendGamestate();
-            
+
             List<PlayerEvent> events = checkEvents();
-            
+
             gameState = gameState.next(PlayerEvent.getSpeedChangeEvents(events), PlayerEvent.getBombDropEvents(events));
             long newTime = System.nanoTime();
-            
+
             try {
                 Thread.sleep((long) Math.max(((Time.MS_PER_S/Ticks.TICKS_PER_SECOND)-(newTime-oldTime)/1000000.0),0));
             } catch (InterruptedException e) {
@@ -94,8 +124,10 @@ public class Server {
         sendGamestate();
         System.out.println("Winner is " + (gameState.winner().orElse(null)!=null ? gameState.winner().get() : "nobody") + "!");
     }
-    
-    
+
+    /**
+     * Sends the game state to the clients.
+     */
     private void sendGamestate(){
         List<Byte> gamestatePacket = GameStateSerializer.serialize(Level.DEFAULT_LEVEL.getBp(), gameState);
         //Send gamestate to clients
@@ -113,11 +145,19 @@ public class Server {
             }
         }
     }
-    
+
+    /**
+     * Closes the channel.
+     */
     private void close() throws IOException{
         channel.close();
     }
-    
+
+    /**
+     * Checks for player events.
+     *
+     * @return List of {@link PlayerEvent}s.
+     */
     private List<PlayerEvent> checkEvents() throws IOException{
         List<PlayerEvent> events = new ArrayList<>();
         SocketAddress sender = null;
@@ -131,8 +171,19 @@ public class Server {
         return events;
     }
 
+    /**
+     * PlayerEvent
+     *
+     * Describes actions performed by clients.
+     * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+     * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+     */
     private static class PlayerEvent{
         //Used to handle the <Optional<Direction>>
+        /**
+         * @return A map between {@link PlayerID}s and {@link Optional} {@link Direction}s representing the actions taken by the clients.
+         * @param List of {@link PlayerEvent}s.
+         */
         private static Map<PlayerID, Optional<Direction>> getSpeedChangeEvents(List<PlayerEvent> events) {
             Map<PlayerID, Optional<Direction>> speedEvents = new EnumMap<>(PlayerID.class);
             for (PlayerEvent event : events) {
@@ -153,7 +204,7 @@ public class Server {
                     case STOP:
                         direction = Optional.empty();
                         break;
-                        
+
                 }
                 if(direction != null){
                     speedEvents.put(event.id,direction);
@@ -161,7 +212,11 @@ public class Server {
             }
             return Collections.unmodifiableMap(speedEvents);
         }
-        
+
+        /**
+         * @return A set of {@link PlayerID}s representing the dropped bombs by the clients.
+         * @param List of {@link PlayerEvent}s.
+         */
         private static Set<PlayerID> getBombDropEvents(List<PlayerEvent> events){
             Set<PlayerID> bombDropEvents = new HashSet<>();
             for (PlayerEvent event : events) {
@@ -170,13 +225,19 @@ public class Server {
             }
             return bombDropEvents;
         }
-        
+
         private final PlayerID id;
         private final PlayerAction action;
+
+        /**
+         * Constructor
+         * @param id     {@link PlayerID}
+         * @param action {@link PlayerAction}
+         */
         public PlayerEvent(PlayerID id, PlayerAction action) {
             this.id = id; this.action = action;
         }
-        
-                
+
+
     }
 }

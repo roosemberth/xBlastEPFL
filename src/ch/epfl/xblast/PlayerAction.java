@@ -9,6 +9,13 @@
 
 package ch.epfl.xblast;
 
+/**
+ * PlayerAction
+ *
+ * Represents the possible player actions.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public enum PlayerAction {
     JOIN_GAME,
     MOVE_N,

@@ -14,13 +14,23 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
 
+/**
+ * Main client Class
+ *
+ * This is the main class for the client. 
+ * Handles parameters and calls the client class.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public final class Main {
 
+    /**
+     * Client main function
+     */
     public static void main(String[] args) throws InvocationTargetException, InterruptedException {
         String hostAdress = "localhost";
         int hostPort = 2016;
-        
-        
+
         if(args.length > 0){
             hostAdress = args[0];
         }
@@ -33,13 +43,12 @@ public final class Main {
                 e.printStackTrace();
             }
         }
-        
+
         try {
             Client client = new Client(hostAdress,hostPort);
             client.run();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException("Exception while running the Client: ", e);
         } 
     }
 }

@@ -10,16 +10,20 @@
 package ch.epfl.xblast;
 
 /**
+ * SubCell
+ *
  * Represents a subcell of the game. Each subcell corresponds to a movement (and therefore minimal distance) unit on the game.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public final class SubCell {
     private static final int COLUMNS = 16;
     private static final int ROWS = 16;
     private static final int BOARD_WIDTH = COLUMNS*Cell.COLUMNS;
     private static final int BOARD_HEIGHT = ROWS*Cell.ROWS;
-    
+
     private final int x, y;
-    
+
     /**
      * Creates a subcell at a given position
      * @param x
@@ -29,7 +33,7 @@ public final class SubCell {
         this.x = Math.floorMod(x, BOARD_WIDTH);
         this.y = Math.floorMod(y, BOARD_HEIGHT);
     }
-    
+
     /**
      * @param cell
      * @return the central subcell corresponding to the specified cell
@@ -37,22 +41,29 @@ public final class SubCell {
     public static SubCell centralSubCellOf(Cell cell){
         return new SubCell(cell.x()*COLUMNS+COLUMNS/2, cell.y()*ROWS+ROWS/2);
     }  
-    
+
     /**
      * @return the Manhathan distance to the central subcell
      */
     public int distanceToCentral(){
         return Math.abs((x%COLUMNS)-(COLUMNS/2)) + Math.abs((y%COLUMNS)-(ROWS/2));
     }
-    
+
+    /**
+     * @return the x position of the subcell.
+     */
     public int x(){
         return x;
     }
+
+    /**
+     * @return the y position of the subcell.
+     */
     public int y(){
         return y;
     }
     /**
-     * @return is this subcell is central
+     * @return if this subcell is a central subcell.
      */
     public boolean isCentral(){
         if((x%COLUMNS) == (COLUMNS/2) && (y%COLUMNS) == (COLUMNS/2)){
@@ -60,7 +71,7 @@ public final class SubCell {
         }
         return false;
     }
-    
+
     public SubCell neighbor(Direction dir){
         switch(dir){
         case N:
@@ -75,14 +86,14 @@ public final class SubCell {
             return null;
         }
     }
-    
+
     /**
      * @return the cell to which this subcell bellongs to
      */
     public Cell containingCell(){
         return new Cell(x/COLUMNS,(y/ROWS));
     }
-    
+
     public boolean equals(Object that){
         if(that == null){
             return false;
@@ -97,10 +108,17 @@ public final class SubCell {
                 return false;
         }
     }
-    
+
+    /**
+     * @return a String representation of the current SubCell.
+     */
     public String toString(){
         return "(" + String.format("%03d", x) + "," + String.format("%03d", y) + ")";
     }
+
+    /**
+     * @return a hash of this Subcell.
+     */
     public int hashCode(){
         return x + BOARD_WIDTH*y;
     }

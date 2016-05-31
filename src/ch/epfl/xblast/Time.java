@@ -10,7 +10,11 @@
 package ch.epfl.xblast;
 
 /**
+ * Time
+ *
  * Provides Time roll constrains
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public interface Time{
     public static final int S_PER_MIN = 60;

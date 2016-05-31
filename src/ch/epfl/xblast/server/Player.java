@@ -6,7 +6,6 @@
  * Released under CC BY-NC-SA License: https://creativecommons.org/licenses/
  */
 
-
 package ch.epfl.xblast.server;
 
 import java.util.Objects;
@@ -18,14 +17,22 @@ import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.SubCell;
 
+/**
+ * Player
+ *
+ * Player abstraction class.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public final class Player {
     private final PlayerID id;
     private final Sq<LifeState> lifeStates;
     private final Sq<DirectedPosition> directedPos;
     private final int maxBombs, bombRange;
-    
+
     /**
-     * Returns true if two objects are internally equal
+     * @return true if both objects are internally equal.:w
+     * @param obj object to compare to.
      */
     @Override public boolean equals(Object obj) {
         if (!(obj instanceof Player))
@@ -43,21 +50,21 @@ public final class Player {
             return false;
         return true;
     };
-    
+
     /**
-     * Returns a hash of the Object
+     * @return a hash of the Object
      */
     @Override public int hashCode() {
         return 7*id.ordinal()+11*lifeStates.hashCode()+13*directedPos.hashCode()+17*maxBombs+19*bombRange;
     }
-    
+
     /**
      * Construct player
-     * @param Player ID
-     * @param lifeStates: Player future states and lives
-     * @param directedPos: Oriented position (where is and in which direction is looking at)
-     * @param maxBombs: Maximum number of bombs the player can own simultaneously on the board
-     * @param bombRange: Range of a bomb explosion
+     * @param Player      ID of the player
+     * @param lifeStates  Player future states and lives
+     * @param directedPos Oriented position (where is and in which direction is looking at)
+     * @param maxBombs    Maximum number of bombs the player can own simultaneously on the board
+     * @param bombRange   Range of a bomb explosion
      */
     public Player(PlayerID id, Sq<LifeState> lifeStates, Sq<DirectedPosition> directedPos, int maxBombs, int bombRange){
         this.id = Objects.requireNonNull(id);
@@ -66,7 +73,7 @@ public final class Player {
         this.maxBombs = ArgumentChecker.requireNonNegative(maxBombs);
         this.bombRange = ArgumentChecker.requireNonNegative(bombRange);
     }
-    
+
     /**
      * Construct player
      * @param Player ID
@@ -75,42 +82,42 @@ public final class Player {
      * @param maxBombs: Maximum number of bombs the player can own simultaneously on the board
      * @param bombRange: Range of a bomb explosion
      */
-	public Player(PlayerID id, int lives, Cell position, int maxBombs, int bombRange) {
-		this(id,getNewLife(lives), getStoppedPosition(position), maxBombs, bombRange);
-	}
-	
-	private static Sq<LifeState> getNewLife(int lives){
-	    if(lives != 0)
-	        return Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, 
-					new LifeState(lives, LifeState.State.INVULNERABLE))
-				.concat(Sq.constant(
-					new LifeState(lives, LifeState.State.VULNERABLE)));
-	    else
-	        return Sq.constant(new LifeState(0,LifeState.State.DEAD));
-	}
-	
-	/**
-	 * @param  target position
-	 * @return Stopped Directed Position Sequence on a given Cell
-	 */
-	private static Sq<DirectedPosition> getStoppedPosition(Cell position){
-		return DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S));
-	}
+    public Player(PlayerID id, int lives, Cell position, int maxBombs, int bombRange) {
+        this(id,getNewLife(lives), getStoppedPosition(position), maxBombs, bombRange);
+    }
     
-	/**
-	 * @return Player id
-	 */
+    private static Sq<LifeState> getNewLife(int lives){
+        if(lives != 0)
+            return Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, 
+                    new LifeState(lives, LifeState.State.INVULNERABLE))
+                .concat(Sq.constant(
+                    new LifeState(lives, LifeState.State.VULNERABLE)));
+        else
+            return Sq.constant(new LifeState(0,LifeState.State.DEAD));
+    }
+    
+    /**
+     * @param  target position
+     * @return Stopped Directed Position Sequence on a given Cell
+     */
+    private static Sq<DirectedPosition> getStoppedPosition(Cell position){
+        return DirectedPosition.stopped(new DirectedPosition(SubCell.centralSubCellOf(position), Direction.S));
+    }
+
+    /**
+     * @return Player id
+     */
     public PlayerID id(){
         return id;
     }
-    
+
     /**
      * @return A list containing the player's current and future states
      */
     public Sq<LifeState> lifeStates(){
         return lifeStates;
     }
-    
+
     /**
      * @return the player's current state
      */
@@ -135,52 +142,52 @@ public final class Player {
         }
         else{
             return l.concat(Sq.repeat(Ticks.PLAYER_INVULNERABLE_TICKS, new LifeState(lives()-1,LifeState.State.INVULNERABLE))
-            		.concat(Sq.constant(new LifeState(lives()-1,LifeState.State.VULNERABLE))));
+                    .concat(Sq.constant(new LifeState(lives()-1,LifeState.State.VULNERABLE))));
         }
     }
-  
+
     /**
      * @return current lives remaining to the player
      */
     public int lives(){
         return lifeStates.head().lives();
     }
-    
+
     /**
      * @return whether or not the player is alive
      */
     public boolean isAlive(){
         return lives() > 0 ? true : false;
     }
-    
+
     /**
      * @return directed position list (where the player is and is looking at)
      */
     public Sq<DirectedPosition> directedPositions(){
         return directedPos;
     }
-    
+
     /**
      * @return current position of the player
      */
     public SubCell position(){
         return directedPos.head().position();
     }
-    
+
     /**
      * @return where the player is heading to
      */
     public Direction direction(){
         return directedPos.head().direction();
     }
-    
+
     /**
      * @return Maximum number of bombs a player can have on the board simultaneously
      */
     public int maxBombs(){
         return maxBombs;
     }
-    
+
     /**
      * @param newMaxBombs
      * @return a player with the specified number of maximum bombs
@@ -188,14 +195,14 @@ public final class Player {
     public Player withMaxBombs(int newMaxBombs){
         return new Player(id, lifeStates, directedPos, newMaxBombs, bombRange);
     }
-    
+
     /**
      * @return Range of an explosion causes by a bomb
      */
     public int bombRange(){
         return bombRange;
     }
-    
+
     /**
      * @param newBombRange
      * @return a player whose bombs have the specified range
@@ -203,35 +210,35 @@ public final class Player {
     public Player withBombRange(int newBombRange){
         return new Player(id, lifeStates, directedPos,maxBombs, newBombRange );
     }
-    
+
     /**
      * @return a new bomb created by the player corresponding to his capabilities
      */
     public Bomb newBomb(){
         return new Bomb(id, position().containingCell(), Ticks.BOMB_FUSE_TICKS, bombRange);
     }
-    
+
     /**
-     *	Represents a a position and a direction (and movement)
+     *    Represents a a position and a direction (and movement)
      */
     public static final class DirectedPosition{
         private final SubCell position;
         private final Direction direction;
-        
+
         /**
          * @return a stopped directed position of a player standing still and facing dp
          */
         public static Sq<DirectedPosition> stopped(DirectedPosition dp){
             return Sq.constant(dp);
         }
-        
+
         /**
          * @return a moving directedPosition of a player at location moving to dp
          */
         public static Sq<DirectedPosition> moving(DirectedPosition dp){
             return Sq.iterate(dp, x -> x.withPosition(x.position.neighbor(x.direction)));
         }
-        
+
         /**
          * @param position
          * @param direction
@@ -240,14 +247,14 @@ public final class Player {
             this.position = Objects.requireNonNull(position);
             this.direction = Objects.requireNonNull(direction);
         }
-        
+
         /**
          * @return current position
          */
         public SubCell position(){
             return position;
         }
-        
+
         /**
          * @param newPosition
          * @return a new directedPosition in a newPosition
@@ -255,14 +262,14 @@ public final class Player {
         public DirectedPosition withPosition(SubCell newPosition){
             return new DirectedPosition(newPosition, direction);
         }
-        
+
         /**
          * @return current direction
          */
         public Direction direction(){
             return direction;
         }
-        
+
         /**
          * @param newDirection
          * @return a new directedPosition towards newDirection
@@ -271,14 +278,14 @@ public final class Player {
             return new DirectedPosition(position, newDirection);
         }
     }
-    
+
     /**
      * Represents number of lives left and Current state 
      */
     public static final class LifeState{
         private final int numLives;
         private final State state;
-        
+
 
         /**
          * @param lives
@@ -288,21 +295,21 @@ public final class Player {
              this.numLives = ArgumentChecker.requireNonNegative(lives);
              this.state =  Objects.requireNonNull(state);
          }
-        
+
         /**
          * @return number of lives
          */
         public int lives(){
             return numLives;
         }
-        
+
         /**
          * @return current state
          */
         public State state(){
             return state;
         }
-      
+
         /**
          * @return true if either INVULNERABLE or VULNERABLE
          */
@@ -310,7 +317,7 @@ public final class Player {
             if(state == State.INVULNERABLE || state == State.VULNERABLE) return true;
             else return false;
         }
-        
+
         /**
          * Possibles states in life 
          */

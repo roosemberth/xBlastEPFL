@@ -20,11 +20,15 @@ import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Lists;
 
 /**
+ * Board
+ *
  * Represents the current state of the game board, y compris les sequences d'interaction de chaque cell.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public final class Board {
     private final List<Sq<Block>> blocks;
-    
+
     /**
      * Creates a Game Board from a List of Cell Sequences
      * @param blocks
@@ -34,7 +38,7 @@ public final class Board {
             throw new IllegalArgumentException("Board passed has unvalid number of elements");
         this.blocks = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(blocks)));
     }
-    
+
     /**
      * Creates a GameBoard from A list of cell rows
      * @param rows
@@ -53,7 +57,7 @@ public final class Board {
         }
         return new Board(board);
     }
-    
+
     /**
      * Creates a Walled Game board from a list of internal rows
      * @param innerBlocks
@@ -76,7 +80,7 @@ public final class Board {
         board.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
         return new Board(board);
     }   
-    
+
     /**
      * Creates a Walled Game board from a list the first quadrant rows
      * @param quadrantNWBlocks
@@ -100,7 +104,7 @@ public final class Board {
         }
         return ofInnerBlocksWalled(board);
     }    
-    
+
     /**
      * @param  Target Cell
      * @return Returns Sequence of Blocks at Target Cell
@@ -108,7 +112,7 @@ public final class Board {
     public Sq<Block> blocksAt(Cell c){
         return blocks.get(c.rowMajorIndex());  
     }
-    
+
     /**
      * @param  Target Cell
      * @return Block at Target Cell
@@ -116,7 +120,7 @@ public final class Board {
     public Block blockAt(Cell c){
         return blocks.get(c.rowMajorIndex()).head();
     }
-    
+
     /**
      * Checks that the rows of the same matrix block have the same size
      * @param matrix
@@ -131,7 +135,5 @@ public final class Board {
             if(l.size() != Cell.COUNT) 
                 throw new IllegalArgumentException("Wrong number of columns for row");
         }
-        
     }
-    
 }

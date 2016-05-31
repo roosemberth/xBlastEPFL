@@ -6,14 +6,16 @@
  * Released under CC BY-NC-SA License: https://creativecommons.org/licenses/
  */
 
-
 package ch.epfl.xblast.server;
 
 import java.util.NoSuchElementException;
 
 /**
- * Represents GameBoard Block
+ * Block
  *
+ * Represents a game block
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public enum Block {
     FREE,
@@ -22,48 +24,55 @@ public enum Block {
     CRUMBLING_WALL,
     BONUS_BOMB(Bonus.INC_BOMB),
     BONUS_RANGE(Bonus.INC_RANGE);
-    
+
     private final Bonus maybeAssociateBonus;
-    
+
+    /**
+     * Constructs a block with a 'possible bonus' association
+     */
     private Block(Bonus maybeAssociateBonus){
         this.maybeAssociateBonus = maybeAssociateBonus;
     }
+
+    /**
+     * Default Constructor
+     */
     private Block(){
         this.maybeAssociateBonus = null;
     }
-    
-    
+
+
     /**
      * @return whether or not the given block is free
      */
     public boolean isFree(){
         return (this == FREE);
     }
-    
+
     /**
      * @return whether or not the block can host the player
      */
-    
+
     public boolean canHostPlayer(){
         return (this == FREE || this.isBonus());
     }
-    
-    
+
+
     /**
      * @return whether or not the block should cast a shadow
      */
     public boolean castsShadow(){
         return (this == INDESTRUCTIBLE_WALL || this == DESTRUCTIBLE_WALL || this == CRUMBLING_WALL);
     }
-    
-   
+
+
     /**
      * @return whether or not the block is of type bonus
      */
     public boolean isBonus(){
         return (this == BONUS_BOMB || this == BONUS_RANGE);
     }
-    
+
     /**
      * @return the bonus associated to the block
      */

@@ -19,11 +19,20 @@ import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * ImageCollection
+ *
+ * Holds the Image set for the client.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public final class ImageCollection {
-    
-    
     private final Map<Integer, Image> images;
-    
+
+    /**
+     * Constructor
+     * @param dirName directory under the classpath where to search the images.
+     */
     public ImageCollection(String dirName){
         images = new HashMap<>();
         File dir;
@@ -39,12 +48,23 @@ public final class ImageCollection {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * @return the image corresponding to the given index.
+     * @throws NoSuchElementException if the given index does not correspond to
+     *        any of hte found images. If you want null instead use imageOrNull method.
+     */
     public Image image(int index){
         if(!images.containsKey(index))
             throw new NoSuchElementException("Image not available");
         return images.get(index);
     }
+
+    /**
+     * @return the image corresponding to the given index.
+     * @return null if the given index does not correspond to any of the found images.
+     *        If you want an exception instead use image method.
+     */
     public Image imageOrNull(int index){
         return images.get(index);
     }

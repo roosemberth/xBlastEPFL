@@ -12,7 +12,11 @@ package ch.epfl.xblast.server;
 import ch.epfl.xblast.Time;
 
 /**
- *  Game Time-Related Constants
+ * Ticks
+ *
+ * Game Time-Related Constants
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public interface Ticks {
     public static final int PLAYER_DYING_TICKS = 8;

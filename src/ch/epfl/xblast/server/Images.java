@@ -9,6 +9,13 @@
 
 package ch.epfl.xblast.server;
 
+/**
+ * Images
+ *
+ * Available images for the game.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public class Images {
     public enum BlockImage{
         IRON_FLOOR,

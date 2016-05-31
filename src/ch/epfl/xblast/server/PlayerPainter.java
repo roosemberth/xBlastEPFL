@@ -15,22 +15,36 @@ import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.LifeState;
 import ch.epfl.xblast.server.Player.LifeState.State;
 
+/**
+ * PlayerPainter
+ *
+ * "Paints" a given player.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public final class PlayerPainter {
+    /**
+     * Private Constructor.
+     * this class is not instanciable.
+     */
     private PlayerPainter(){}
-    
+
     private static final int stepsId[] = {0,1,0,2};
-    
+
     private static final byte BYTE_FOR_DEAD = 15;
-    
+
+    /**
+     * @return the byte corresponding to the specified {@link Player}.
+     */
     public static byte byteForPlayer(int tick, Player p){ 
         LifeState ls = p.lifeState();
         SubCell c = p.position();
-        
+
         int playerID = 20*(ls.state().equals(State.INVULNERABLE) && (tick % 2) == 1 ? 4 : p.id().ordinal());
-        
+
         if(ls.canMove()){
             int steps = 0;
-            
+
             if(p.direction().isParallelTo(Direction.W)){
                 steps = stepsId[c.x()%4];
             }

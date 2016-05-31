@@ -14,11 +14,15 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Lists
+ *
  * Provides tools for managing the Lists 
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public final class Lists {
     private Lists(){}
-    
+
     /**
      * Returns the list mirrored, the 
      * last element in the original list not being repeated

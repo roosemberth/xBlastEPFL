@@ -10,7 +10,11 @@
 package ch.epfl.xblast;
 
 /**
- *  PlayerID Instance associated to each player
+ * PlayerID
+ *
+ * PlayerID associated to each player
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public enum PlayerID {
     PLAYER_1,

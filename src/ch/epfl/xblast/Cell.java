@@ -15,21 +15,27 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- *  Represents a Game Board Cell
+ * Cell
+ *
+ * Represents a Game Board Cell
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
  */
 public final class Cell {
     public static final int COLUMNS = 15;
     public static final int ROWS = 13;
     public static final int COUNT = COLUMNS * ROWS;
-    
+
     private final int x, y;
-    
+
     public static final List<Cell> ROW_MAJOR_ORDER = 
             Collections.unmodifiableList(rowMajorOrder());
     public static final List<Cell> SPIRAL_ORDER = 
             Collections.unmodifiableList(spiralOrder());
-    
 
+    /**
+     * @return List of {@link Cell}s in a row major order basis.
+     */
     private static ArrayList<Cell> rowMajorOrder(){
         ArrayList<Cell> rowMajorOrder = new ArrayList<Cell>();
         for(int y = 0; y < ROWS; y++){
@@ -39,7 +45,10 @@ public final class Cell {
         }
         return rowMajorOrder;
     }
-    
+
+    /**
+     * @return List of {@link Cell}s in an spiral order. Clockwise from the upper Left corner.
+     */
     private static ArrayList<Cell> spiralOrder(){
 
         ArrayList<Cell> spiral = new ArrayList<Cell>();
@@ -52,9 +61,9 @@ public final class Cell {
         for(int y = 0; y < ROWS; y++){
             iy.add(y);
         }
-        
+
         boolean horizontal = true;
-        
+
         while(!ix.isEmpty() && !iy.isEmpty()){
             ArrayList<Integer> i1;
             ArrayList<Integer> i2;
@@ -79,10 +88,10 @@ public final class Cell {
             Collections.reverse(i1);
             horizontal = !horizontal;
         }
-        
+
         return spiral;
     }
-    
+
     /**
      * Constructs a new cell, storing position x and y (fits into board size)
      * @param x
@@ -92,7 +101,7 @@ public final class Cell {
         this.x = Math.floorMod(x, COLUMNS);
         this.y = Math.floorMod(y, ROWS);
     }
-    
+
     /**
      * @return the component x of the position
      */
@@ -106,7 +115,7 @@ public final class Cell {
     public int y(){
         return y;
     }
-    
+
 
     /**
      * @return the index of the cell, in row order
@@ -114,7 +123,7 @@ public final class Cell {
     public int rowMajorIndex(){
         return x + COLUMNS*y;
     }
-    
+
 
     /**
      * @return the neighbor Cell in the given Direction
@@ -133,7 +142,10 @@ public final class Cell {
             return null;
         }
     }
-    
+
+    /**
+     * @return whether this object equals to the specified object.
+     */
     public boolean equals(Object that){
         if(that == null){
             return false;
@@ -145,10 +157,17 @@ public final class Cell {
         else 
             return false;
     }
-    
+
+    /**
+     * @return a {@link String} Representation of the current object.
+     */
     public String toString(){
         return "("+String.format("%02d", x)+","+String.format("%02d", y)+")";
     }
+
+    /**
+     * @return a hash of this object.
+     */
     public int hashCode(){
         return rowMajorIndex();
     }

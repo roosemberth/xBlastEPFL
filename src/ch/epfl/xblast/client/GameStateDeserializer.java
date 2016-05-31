@@ -24,29 +24,47 @@ import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.client.GameState.Player;
 import ch.epfl.xblast.server.Player.LifeState.State;
 
+/**
+ * GameStateDeserializer
+ *
+ * Deserializes a game state from a compressed stream.
+ * @author 247128 - Roosembert Palacios <roosembert.palacios@epfl.ch>
+ * @author 246452 - Pedro Miguel Candeias <pedro.candeiasmartins@epfl.ch>
+ */
 public final class GameStateDeserializer {
-
     private static final ImageCollection BLOCK_COLLECTION = new ImageCollection("block");
     private static final ImageCollection EXPLOSION_COLLECTION = new ImageCollection("explosion");
     private static final ImageCollection PLAYER_COLLECTION = new ImageCollection("player");
     private static final ImageCollection SCORE_COLLECTION = new ImageCollection("score");
-    
+
+    /**
+     * Private constructor
+     * this class is not instanciable.
+     */
     private GameStateDeserializer(){}
-    
+
+    /**
+     * @return deserialized gamestate from a compressed stream.
+     * @param gs Compressed stream.
+     */
     public static GameState deserializeGameState(List<Byte> gs){
         List<Image> images = new ArrayList<>();
         int bytesBoard = gs.get(0);
         int bytesBombsExplosions = gs.get(bytesBoard+1);
-        
+
         List<Image> boardImages = readBoard(gs.subList(1, bytesBoard+1));
         List<Image> bombsExplImages = readBombsExplosions(gs.subList(bytesBoard+2, bytesBoard+bytesBombsExplosions+2));
         List<Player> players = readPlayers(gs.subList(bytesBoard+bytesBombsExplosions+2, bytesBoard+bytesBombsExplosions+16+2));
         List<Image> scoreImages = readScore(players);
         List<Image> timerImages = readTimer(gs.get(bytesBoard+bytesBombsExplosions+16+2)); 
-        
+
         return new GameState(players, boardImages, bombsExplImages, scoreImages, timerImages);
     }
 
+    /**
+     * @return List of players
+     * @param playerInfo compressed stream.
+     */
     private static List<Player> readPlayers(List<Byte> playerInfo){
         List<Player> players = new ArrayList<>();
         Iterator<Byte> it = playerInfo.iterator();
@@ -63,10 +81,14 @@ public final class GameStateDeserializer {
         }
         return players;
     }
-    
+
+    /**
+     * @return List of images for the Gameboard
+     * @param board compressed Stream.
+     */
     private static List<Image> readBoard(List<Byte> board){
         List<Image> images = new ArrayList<>();
-        
+
         List<Byte> decoded = RunLengthEncoder.decode(board);
         Map<Cell, Integer> order = new HashMap<>();
         int i = 0;
@@ -79,20 +101,28 @@ public final class GameStateDeserializer {
             int index = decoded.get(order.get(c));
             images.add(BLOCK_COLLECTION.imageOrNull(index));
         }
-        
+
         return images;
     }
-    
+
+    /**
+     * @return Explosion images.
+     * @param bombs compressed stream of bombs and explosions.
+     */
     private static List<Image> readBombsExplosions(List<Byte> bombs){
         List<Image> images = new ArrayList<>();
 
         for(Byte b : RunLengthEncoder.decode(bombs)){
             images.add(EXPLOSION_COLLECTION.imageOrNull(b));
         }
-        
+
         return images;
     }
-    
+
+    /**
+     * @return Score line images.
+     * @param players Game players.
+     */
     private static List<Image> readScore(List<Player> players){
         List<Image> images = new ArrayList<>();
         for(int i = 0; i < 2; i++){
@@ -114,7 +144,11 @@ public final class GameStateDeserializer {
         }
         return images;
     }
-    
+
+    /**
+     * @return timer images list
+     * @param remainingSec remaining seconds of game.
+     */
     private static List<Image> readTimer(int remainingSec){
         List<Image> images = new ArrayList<>();
         for(int i = 0; i < 60; i++){
