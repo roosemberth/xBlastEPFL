@@ -204,8 +204,7 @@ public class Server {
                         direction = Optional.empty();
                         break;
                 default:
-                    throw new RuntimeException("Coherence error");
-
+                        break;
                 }
                 if(direction != null){
                     speedEvents.put(event.id,direction);
