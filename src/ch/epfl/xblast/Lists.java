@@ -59,7 +59,7 @@ public final class Lists {
             List<List<T>> possiblePermutations = permutations(l.subList(1, l.size()));
             for(List<T> ls : possiblePermutations){
                 for(int i = 0; i < ls.size()+1; i++){
-                    List<T> newList = new ArrayList(ls);
+                    List<T> newList = new ArrayList<>(ls);
                     newList.add(i, l.get(0));
                     list.add(newList);
                 }

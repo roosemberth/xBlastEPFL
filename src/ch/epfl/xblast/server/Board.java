@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import ch.epfl.cs108.Sq;
 import ch.epfl.xblast.Cell;
@@ -45,7 +44,7 @@ public final class Board {
      * @return
      */
     public static Board ofRows(List<List<Block>> rows){
-        List<Sq<Block>> board = new ArrayList();
+        List<Sq<Block>> board = new ArrayList<>();
         if(rows.size() != Cell.ROWS) 
             throw new IllegalArgumentException("Wrong number of rows");
         for(List<Block> l : rows){
@@ -64,7 +63,7 @@ public final class Board {
      * @return
      */
     public static  Board ofInnerBlocksWalled(List<List<Block>> innerBlocks){
-        List<Sq<Block>> board = new ArrayList();
+        List<Sq<Block>> board = new ArrayList<>();
         board.addAll(Collections.nCopies(Cell.COLUMNS, Sq.constant(Block.INDESTRUCTIBLE_WALL)));
         if(innerBlocks.size() != (Cell.ROWS-2))  
             throw new IllegalArgumentException("Wrong number of rows");
@@ -87,7 +86,7 @@ public final class Board {
      * @return
      */
     public static Board ofQuadrantNWBlocksWalled(List<List<Block>> quadrantNWBlocks){
-        List<List<Block>> board = new ArrayList();
+        List<List<Block>> board = new ArrayList<>();
         if(quadrantNWBlocks.size() != (int)Math.ceil((Cell.ROWS-2)/2.0)) 
             throw new IllegalArgumentException("Wrong number of rows");
         for(List<Block> l : quadrantNWBlocks){

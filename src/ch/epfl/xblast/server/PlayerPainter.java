@@ -9,7 +9,6 @@
 
 package ch.epfl.xblast.server;
 
-import ch.epfl.xblast.Cell;
 import ch.epfl.xblast.Direction;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.server.Player.LifeState;

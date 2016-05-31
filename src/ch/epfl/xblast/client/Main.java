@@ -12,8 +12,6 @@ package ch.epfl.xblast.client;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
-
 /**
  * Main client Class
  *

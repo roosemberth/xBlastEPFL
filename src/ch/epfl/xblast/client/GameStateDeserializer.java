@@ -11,7 +11,6 @@ package ch.epfl.xblast.client;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +21,6 @@ import ch.epfl.xblast.PlayerID;
 import ch.epfl.xblast.RunLengthEncoder;
 import ch.epfl.xblast.SubCell;
 import ch.epfl.xblast.client.GameState.Player;
-import ch.epfl.xblast.server.Player.LifeState.State;
 
 /**
  * GameStateDeserializer
@@ -48,7 +46,6 @@ public final class GameStateDeserializer {
      * @param gs Compressed stream.
      */
     public static GameState deserializeGameState(List<Byte> gs){
-        List<Image> images = new ArrayList<>();
         int bytesBoard = gs.get(0);
         int bytesBombsExplosions = gs.get(bytesBoard+1);
 
